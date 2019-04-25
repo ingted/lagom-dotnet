@@ -364,25 +364,25 @@ namespace wyvern.api.ioc
         {
             switch (call.CallId)
             {
-                case PathCallId pathCallIdentifier:
+                case PathCallId _:
                     throw new InvalidOperationException("PathCallId path type not set up");
 
-                case RestCallId restCallIdentifier when restCallIdentifier.Method == Method.DELETE:
+                case RestCallId restCallIdentifier when Method.DELETE.Equals(restCallIdentifier.Method):
                     return (router.MapDelete, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when restCallIdentifier.Method == Method.GET:
+                case RestCallId restCallIdentifier when Method.GET.Equals(restCallIdentifier.Method):
                     return (router.MapGet, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when restCallIdentifier.Method == Method.PATCH:
+                case RestCallId restCallIdentifier when Method.PATCH.Equals(restCallIdentifier.Method):
                     return ((tmpl, hndlr) => router.MapVerb("PATCH", tmpl, hndlr), restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when restCallIdentifier.Method == Method.POST:
+                case RestCallId restCallIdentifier when Method.POST.Equals(restCallIdentifier.Method):
                     return (router.MapPost, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when restCallIdentifier.Method == Method.PUT:
+                case RestCallId restCallIdentifier when Method.PUT.Equals(restCallIdentifier.Method):
                     return (router.MapPut, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier:
+                case RestCallId _:
                     throw new InvalidOperationException("Unhandled REST Method type for RestCallId");
 
                 case StreamCallId streamCallIdentifier:

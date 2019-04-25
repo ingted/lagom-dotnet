@@ -1,4 +1,3 @@
-using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 
 public abstract class HelloEvent : AggregateEvent<HelloEvent>

@@ -13,11 +13,6 @@ using wyvern.entity.command;
 public abstract class HelloCommand : AbstractCommand
 {
     /// <summary>
-    /// Constructor
-    /// </summary>
-    public HelloCommand() { }
-
-    /// <summary>
     /// Command object designed to request that the Entity response with `Hello, ${name}`
     /// </summary>
     /// <typeparam name="string">Reply type bound to this specific command</typeparam>

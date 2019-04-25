@@ -1,17 +1,11 @@
-using System;
-using Akka;
 using Akka.Streams.Util;
-using wyvern.api.abstractions;
 using wyvern.api.ioc;
-using wyvern.entity.command;
-using wyvern.entity.@event;
-using wyvern.entity.state;
 using static HelloCommand;
 using static HelloEvent;
 
 /// <summary>
 /// This entity is a collection of command handlers, event handlers and
-/// behavioural changes in response to the commands and events.
+/// behavioral changes in response to the commands and events.
 /// </summary>
 /// <typeparam name="HelloCommand"></typeparam>
 /// <typeparam name="HelloEvent"></typeparam>
@@ -46,7 +40,7 @@ public class HelloEntity : ShardedEntity<HelloCommand, HelloEvent, HelloState>
             // caller from within this handler.  It is done so by calling
             // `ctx.Reply(...)` with an object of the `TR` type denoted
             // by the IReplyType<TR> interface attached to the corresponding
-            // `UpdateGreeingCommand`.  We may call `ctx.Reply(...)` either
+            // `UpdateGreetingCommand`.  We may call `ctx.Reply(...)` either
             // from the callback directly, or from within the side effect
             // callback of the `ThenPersist(...)` method.  These options will
             // respond accordingly:

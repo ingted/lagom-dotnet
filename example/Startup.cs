@@ -22,7 +22,6 @@ public class Startup
         });
 
         services.AddReactiveServices(x =>
-
             {
                 // Note: these don't really need to be called, they are the default
                 //       I've only added them here as an example
@@ -33,11 +32,7 @@ public class Startup
                 x.AddReactiveService<HelloService, HelloServiceImpl>();
 
                 /* Any additions to the actor system can be done in here */
-                x.AddActorSystemDelegate(system =>
-                {
-                    /* This visualizer is a bit of a nice to have, not fully functional yet */
-                    ActorVisualizeExtension.InstallVisualizer(system);
-                });
+                x.AddActorSystemDelegate(ActorVisualizeExtension.InstallVisualizer);
             },
             /*
              * Optionally enable any reactive services options here.

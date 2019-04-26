@@ -61,7 +61,7 @@ namespace wyvern.api.ioc
                             .ToList();
 
                     var mref = call.MethodRef;
-                    var reqType = mref.ReturnType.GenericTypeArguments[0];
+                    var reqType = mref.Method.ReturnType.GenericTypeArguments[0];
 
                     if (reqType != typeof(NotUsed))
                     {
@@ -79,12 +79,12 @@ namespace wyvern.api.ioc
                             ).ToList();
                     }
 
-                    var resType = mref.ReturnType
+                    var resType = mref.Method.ReturnType
                         .GenericTypeArguments[1]  // Task<T>
                         .GenericTypeArguments[0]; // T
-                    var first = call.MethodRef.Name.IndexOf("<get_") + 5;
-                    var second = call.MethodRef.Name.IndexOf(">");
-                    var method_ref_name = call.MethodRef.Name.Substring(first, second - first);
+                    var first = call.MethodRef.Method.Name.IndexOf("<get_") + 5;
+                    var second = call.MethodRef.Method.Name.IndexOf(">");
+                    var method_ref_name = call.MethodRef.Method.Name.Substring(first, second - first);
                     var operation = new Operation()
                     {
                         OperationId = method_ref_name,

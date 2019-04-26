@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 
 namespace wyvern.api.abstractions
@@ -8,7 +9,7 @@ namespace wyvern.api.abstractions
     public interface ICall
     {
         ICallId CallId { get; }
-        MethodInfo MethodRef { get; }
+        Delegate MethodRef { get; }
     }
 
     /// <summary>

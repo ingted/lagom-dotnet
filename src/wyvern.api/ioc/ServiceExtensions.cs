@@ -29,6 +29,7 @@ namespace wyvern.api.ioc
 {
     public static partial class ServiceExtensions
     {
+        [Obsolete("WARNING: need to remove this for unit tests to work properly")]
         static ReactiveServicesOption Options;
 
         /// <summary>
@@ -113,10 +114,10 @@ namespace wyvern.api.ioc
                     {
                         switch (call.CallId)
                         {
-                            case RestCallId r:
-                                RegisterCall(router, service, serviceType, call);
+                            case RestCallId _:
+                                RegisterCall(router, service, call);
                                 break;
-                            case StreamCallId s:
+                            case StreamCallId _:
                                 RegisterStream(router, service, serviceType, call, app);
                                 break;
                             default:
@@ -203,11 +204,11 @@ namespace wyvern.api.ioc
         /// <param name="service"></param>
         /// <param name="serviceType"></param>
         /// <param name="call"></param>
-        private static void RegisterCall(IRouteBuilder router, Service service, Type serviceType, ICall call)
+        private static void RegisterCall(IRouteBuilder router, Service service, ICall call)
         {
             var (routeMapper, path) = ExtractRoutePath(router, call);
 
-            var mref = call.MethodRef;
+            var mref = call.MethodRef.Method;
             var mrefParams = mref.GetParameters();
             var methodRefType = mref.ReturnType;
             var requestType = methodRefType.GenericTypeArguments[0];
@@ -224,7 +225,7 @@ namespace wyvern.api.ioc
                             {
                                 var val = data.Values[name].ToString();
                                 if (type == typeof(String))
-                                    return val as object;
+                                    return val;
                                 if (type == typeof(Int64))
                                     return Int64.Parse(val) as object;
                                 if (type == typeof(Int32))
@@ -241,16 +242,15 @@ namespace wyvern.api.ioc
                         })
                         .ToArray();
 
-                    var mres = mref.Invoke(service, mrefParamArray);
-                    var cref = mres.GetType().GetMethod("Invoke", new[] { requestType });
+                    var propName = mref.Name.Substring(mref.Name.IndexOf("_") + 1, mref.Name.IndexOf(">") - (mref.Name.IndexOf("_") + 1));
+                    var prop = service.GetType().GetProperty(propName).GetMethod;
+                    var del = prop.Invoke(service, new object[] { }) as Delegate;
+                    var mres = del.DynamicInvoke(mrefParamArray) as Delegate;
 
                     dynamic task;
                     if (requestType == typeof(NotUsed))
                     {
-                        task = cref.Invoke(mres, new object[]
-                        {
-                            NotUsed.Instance
-                        });
+                        task = mres.DynamicInvoke(NotUsed.Instance);
                     }
                     else
                     {
@@ -259,7 +259,7 @@ namespace wyvern.api.ioc
                             body = reader.ReadToEnd();
 
                         var obj = JsonConvert.DeserializeObject(body, requestType);
-                        task = cref.Invoke(mres, new[] { obj });
+                        task = mres.DynamicInvoke(obj);
                     }
 
                     try
@@ -303,7 +303,7 @@ namespace wyvern.api.ioc
         {
             var (_, path) = ExtractRoutePath(router, call);
 
-            var mref = call.MethodRef;
+            var mref = call.MethodRef.Method;
             var mrefParams = mref.GetParameters();
             var methodRefType = mref.ReturnType;
 
@@ -367,20 +367,33 @@ namespace wyvern.api.ioc
                 case PathCallId _:
                     throw new InvalidOperationException("PathCallId path type not set up");
 
-                case RestCallId restCallIdentifier when Method.DELETE.Equals(restCallIdentifier.Method):
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.DELETE == restCallIdentifier.Method:
                     return (router.MapDelete, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when Method.GET.Equals(restCallIdentifier.Method):
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.GET == restCallIdentifier.Method:
                     return (router.MapGet, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when Method.PATCH.Equals(restCallIdentifier.Method):
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.PATCH == restCallIdentifier.Method:
                     return ((tmpl, hndlr) => router.MapVerb("PATCH", tmpl, hndlr), restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when Method.POST.Equals(restCallIdentifier.Method):
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.POST == restCallIdentifier.Method:
                     return (router.MapPost, restCallIdentifier.PathPattern);
 
-                case RestCallId restCallIdentifier when Method.PUT.Equals(restCallIdentifier.Method):
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.PUT == restCallIdentifier.Method:
                     return (router.MapPut, restCallIdentifier.PathPattern);
+
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.HEAD == restCallIdentifier.Method:
+                    return ((tmpl, hndlr) => router.MapVerb("HEAD", tmpl, hndlr), restCallIdentifier.PathPattern);
+
+                // ReSharper disable once PossibleUnintendedReferenceComparison
+                case RestCallId restCallIdentifier when Method.OPTIONS == restCallIdentifier.Method:
+                    return ((tmpl, hndlr) => router.MapVerb("OPTIONS", tmpl, hndlr), restCallIdentifier.PathPattern);
 
                 case RestCallId _:
                     throw new InvalidOperationException("Unhandled REST Method type for RestCallId");

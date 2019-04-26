@@ -45,7 +45,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new PathCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -66,7 +66,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new PathCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -88,7 +88,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new PathCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -111,7 +111,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new PathCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -133,7 +133,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new RestCallId(method, pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -158,7 +158,7 @@ namespace wyvern.api
             if (pathPattern == null) throw new ArgumentNullException(nameof(pathPattern));
             return new Call<TRequest, TResponse>(
                 new RestCallId(method, pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -183,7 +183,7 @@ namespace wyvern.api
             if (pathPattern == null) throw new ArgumentNullException(nameof(pathPattern));
             return new Call<TRequest, TResponse>(
                 new RestCallId(method, pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -210,7 +210,7 @@ namespace wyvern.api
             if (pathPattern == null) throw new ArgumentNullException(nameof(pathPattern));
             return new Call<TRequest, TResponse>(
                 new RestCallId(method, pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -248,7 +248,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new StreamCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -270,7 +270,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new StreamCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
 
@@ -292,7 +292,7 @@ namespace wyvern.api
         {
             return new Call<TRequest, TResponse>(
                 new StreamCallId(pathPattern),
-                methodRef.Method
+                methodRef
             );
         }
     }

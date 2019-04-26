@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using wyvern.api.abstractions;
 
@@ -9,9 +10,9 @@ namespace wyvern.api.@internal.surfaces
     internal abstract class Call : ICall
     {
         public ICallId CallId { get; }
-        public MethodInfo MethodRef { get; }
+        public Delegate MethodRef { get; }
 
-        protected Call(CallId callId, MethodInfo methodRef)
+        protected Call(CallId callId, Delegate methodRef)
         {
             (CallId, MethodRef) =
                 (callId, methodRef);
@@ -32,7 +33,7 @@ namespace wyvern.api.@internal.surfaces
         /// </summary>
         /// <param name="callId">Call identifier</param>
         /// <param name="methodRef">Method reference to service call</param>
-        public Call(CallId callId, MethodInfo methodRef)
+        public Call(CallId callId, Delegate methodRef)
             : base(callId, methodRef)
         {
         }

@@ -17,7 +17,7 @@ namespace wyvern.tests
                 .WithCalls(
                     new Call<string, string>(
                         new RestCallId(Method.GET, "/api/test/{id}"),
-                        function.Method
+                        function
                     )
                 );
             var hash_1 = desc_1.GetHashCode();
@@ -25,7 +25,7 @@ namespace wyvern.tests
             var desc_2 = desc_1.WithCalls(
                 new Call<string, string>(
                     new RestCallId(Method.GET, "/api/test/{id}"),
-                    function.Method
+                    function
                 )
             );
             var hash_2 = desc_2.GetHashCode();

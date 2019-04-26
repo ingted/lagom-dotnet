@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Akka;
@@ -24,8 +25,9 @@ namespace wyvern.api.abstractions
         ) where TE : AggregateEvent<TE>;
 
         IShardedEntityReference RefFor<T>(string entityId) where T : class;
-        void Register<T, TC, TE, TS>()
-            where T : ShardedEntity<TC, TE, TS>, new()
+
+        void Register<T, TC, TE, TS>(Func<T> entityFactory)
+            where T : ShardedEntity<TC, TE, TS>
             where TC : AbstractCommand
             where TE : AbstractEvent
             where TS : AbstractState;

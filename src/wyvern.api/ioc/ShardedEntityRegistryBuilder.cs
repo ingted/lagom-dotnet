@@ -32,14 +32,14 @@ namespace wyvern.api.ioc
             ExtensionDelegates.Add(x => x.WithExtension<ClusterDistribution, ClusterDistributionExtensionProvider>());
         }
 
-        public IShardedEntityRegistryBuilder WithShardedEntity<T, C, E, S>()
-            where T : ShardedEntity<C, E, S>, new()
+        public IShardedEntityRegistryBuilder WithShardedEntity<T, C, E, S>(Func<T> entityFactory = null)
+            where T : ShardedEntity<C, E, S>
             where C : AbstractCommand
             where E : AbstractEvent
             where S : AbstractState
         {
             RegistryDelegates.Add(
-                y => y.Register<T, C, E, S>()
+                y => y.Register<T, C, E, S>(entityFactory ?? Activator.CreateInstance<T>)
             );
             return this;
         }

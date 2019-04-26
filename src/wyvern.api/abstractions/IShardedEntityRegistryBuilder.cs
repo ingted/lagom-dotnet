@@ -1,3 +1,4 @@
+using System;
 using Akka.Actor;
 using wyvern.api.@internal.readside;
 using wyvern.api.ioc;
@@ -18,8 +19,8 @@ namespace wyvern.api.abstractions
             where TEvent : AggregateEvent<TEvent>
             where TProcessor : ReadSideProcessor<TEvent>, new();
         
-        IShardedEntityRegistryBuilder WithShardedEntity<T, TCommand, TEvent, TState>()
-            where T : ShardedEntity<TCommand, TEvent, TState>, new()
+        IShardedEntityRegistryBuilder WithShardedEntity<T, TCommand, TEvent, TState>(Func<T> entityFactory = null)
+            where T : ShardedEntity<TCommand, TEvent, TState>
             where TCommand : AbstractCommand
             where TEvent : AbstractEvent
             where TState : AbstractState;

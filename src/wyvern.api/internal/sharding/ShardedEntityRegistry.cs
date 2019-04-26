@@ -250,15 +250,15 @@ namespace wyvern.api.@internal.sharding
         }
 
 
-        public void Register<T, TC, TE, TS>()
-            where T : ShardedEntity<TC, TE, TS>, new()
+        public void Register<T, TC, TE, TS>(Func<T> entityFactory)
+            where T : ShardedEntity<TC, TE, TS>
             where TC : AbstractCommand
             where TE : AbstractEvent
             where TS : AbstractState
         {
-            var prototype = new T();
-            var entityTypeName = prototype.EntityTypeName;
-            var entityClassType = prototype.GetType();
+            var proto = entityFactory.Invoke();
+            var entityTypeName = proto.EntityTypeName;
+            var entityClassType = proto.GetType();
 
             var alreadyRegistered = RegisteredTypeNames.GetOrAdd(entityTypeName, entityClassType);
             if (alreadyRegistered != null && alreadyRegistered != entityClassType)
@@ -280,7 +280,7 @@ namespace wyvern.api.@internal.sharding
                 var props = ShardedEntityActorProps.Create<T, TC, TE, TS>(
                     entityTypeName,
                     Option<string>.None,
-                    () => new T(),
+                    entityFactory,
                     SnapshotAfter,
                     PassivateAfterIdleTimeout,
                     snapshotPluginId,

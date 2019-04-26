@@ -13,10 +13,7 @@ namespace wyvern.api.tests
         {
             var types = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .Where(x => x.Namespace != null 
-                            && x.Namespace.StartsWith("wyvern.api", true, CultureInfo.InvariantCulture) 
-                            && !x.Namespace.EndsWith("tests", true, CultureInfo.InvariantCulture)
-                            )
+                .Where(x => x.Namespace != null && x.Assembly.FullName.Equals("wyvern.api"))
                 .Where(x => x.IsClass || x.IsInterface)
                 .Where(x => x.IsPublic)
                 .Where(x => x.GetCustomAttributes(typeof(TraitAttribute), true).Length == 0);

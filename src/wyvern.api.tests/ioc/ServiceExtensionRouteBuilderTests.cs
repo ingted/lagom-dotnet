@@ -1,10 +1,27 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Akka.Persistence.Query;
 using wyvern.api.@internal.surfaces;
 using wyvern.api.ioc;
 using Xunit;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace wyvern.api.tests.ioc
 {
+    public class AlphabeticalOrderer : ITestCaseOrderer
+    {
+        public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases)
+            where TTestCase : ITestCase
+        {
+            var result = testCases.ToList();
+            result.Sort((x, y) => StringComparer.OrdinalIgnoreCase.Compare(x.TestMethod.Method.Name, y.TestMethod.Method.Name));
+            return result;
+        }
+    }
+
+    [TestCaseOrderer("wyvern.api.tests.ioc.AlphabeticalOrderer", "wyvern.api.tests")]
     public class ServiceExtensionRouteBuilderTests
     {
         [Fact]

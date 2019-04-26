@@ -29,6 +29,11 @@ namespace wyvern.api.ioc
 {
     public static partial class ServiceExtensions
     {
+        public interface IRouteCollectionConsumer
+        {
+            void Consume(RouteCollection collection);
+        }
+
         [Obsolete("WARNING: need to remove this for unit tests to work properly")]
         static ReactiveServicesOption Options;
 
@@ -133,6 +138,8 @@ namespace wyvern.api.ioc
 
                 // Build the API
                 var routes = router.Build();
+                var consumer = services.GetService<IRouteCollectionConsumer>();
+                consumer?.Consume(routes as RouteCollection);
                 app.UseRouter(routes);
 
                 // Optionally, add swagger components

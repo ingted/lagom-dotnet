@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 public class Program
 {
     public static void Main(string[] args)
     {
-        CreateWebHostBuilder(args).Build().Run();
+        CreateWebHostBuilder(args).Build().Start();
     }
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

@@ -10,14 +10,9 @@ namespace wyvern.api
 {
     public static class ShardedEntitiesModule
     {
-        static bool WasCalled { get; set; }
-
         public static IServiceCollection AddShardedEntities(this IServiceCollection services,
             Action<IShardedEntityRegistryBuilder> builderDelegate)
         {
-            if (WasCalled) throw new Exception("ShardedEntitiesModule already called");
-            WasCalled = true;
-
             services.AddSingleton(x =>
             {
                 // TODO: this can just be registered and invoked on the other end...

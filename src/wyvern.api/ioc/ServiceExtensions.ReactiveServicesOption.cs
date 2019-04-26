@@ -7,23 +7,23 @@ namespace wyvern.api.ioc
         [Flags]
         public enum ReactiveServicesOption
         {
-            None,
+            None = 0,
             /// <summary>
             /// Enables the REST API
             /// </summary>
-            WithApi,
+            WithApi = 1,
             /// <summary>
             /// Enables Swagger generation on the REST API
             /// </summary>
-            WithSwagger,
+            WithSwagger = 2,
             /// <summary>
             /// Enables the visualizer
             /// </summary>
-            WithVisualizer,
+            WithVisualizer = 4,
             /// <summary>
             /// Enables publishing to an AMQP topic
             /// </summary>
-            WithTopics
+            WithTopics = 8
         }
     }
 }

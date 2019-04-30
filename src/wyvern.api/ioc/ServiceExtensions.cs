@@ -254,11 +254,28 @@ namespace wyvern.api.ioc
                     var serverServiceCall = route.DynamicInvoke(mrefParamArray);
                     var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
 
-                    Func<RequestHeader, RequestHeader> headerFunc = (header) => RequestHeader.DEFAULT;
+                    // TODO: Make this injectable.
+                    Func<RequestHeader, RequestHeader> headerFunc = (header) =>
+                        {
+                            var n = header;
+                            foreach (var h in req.Headers)
+                                n = n.WithHeaders(h.Key, h.Value);
+                            if (n.Headers.ContainsKey("Authorization"))
+                            {
+                                // TODO: Read, validate, transform the token
+                                n = n.WithPrincipal(
+                                    new Principal(
+                                        n.Headers["Authorization"].First()
+                                    )
+                                );
+                            }
+                            return n;
+                        };
+
                     var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new[] { headerFunc });
                     var serviceCallInvoke = serverServiceCall.GetType().GetMethod("Invoke");
 
-                    // TODO: invoke header response..
+                    // TODO: invoke header response
                     // TODO: Serialization, translations - add JWT/Principal
                     //       translator
 

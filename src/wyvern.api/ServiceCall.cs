@@ -7,22 +7,6 @@ using wyvern.utils;
 
 namespace wyvern.api
 {
-    public class Filters
-    {
-        public static ServerServiceCall<TReq, TRes> Authenticated<TReq, TRes>(Func<string, Task<ServerServiceCall<TReq, TRes>>> authenticatedServiceCall)
-        {
-            return ServerServiceCall<TReq, TRes>.ComposeAsync(
-                async (RequestHeader requestHeader) =>
-                {
-                    var userId = requestHeader.Principal.OrElseThrow(
-                         new Exception("Not authenticated")
-                    ).Name;
-                    return await authenticatedServiceCall(userId);
-                }
-            );
-        }
-    }
-
     public class ServiceCall<TReq, TRes>
     {
         protected Func<TReq, Task<TRes>> Func { get; }

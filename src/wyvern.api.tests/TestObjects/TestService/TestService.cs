@@ -7,16 +7,16 @@ namespace wyvern.api.tests.ioc
 {
     public abstract class TestService : Service
     {
-        public abstract Func<Func<User, Task<string>>> CreateUser { get; }
-        public abstract Func<string, Func<NotUsed, Task<UserWithId>>> GetUser { get; }
-        public abstract Func<string, Func<NotUsed, Task<Done>>> DeleteUser { get; }
-        public abstract Func<string, Func<NotUsed, Task<NotUsed>>> HeadUser { get; }
-        public abstract Func<string, Func<NotUsed, Task<NotUsed>>> OptionsUser { get; }
-        public abstract Func<string, Func<User, Task<Done>>> PatchUser { get; }
-        public abstract Func<string, Func<User, Task<Done>>> PutUser { get; }
-        public abstract Func<string, Func<UserFriend, Task<string>>> CreateUserFriend { get; }
-        public abstract Func<string, string, Func<NotUsed, Task<UserFriend>>> GetUserFriend { get; }
-        public abstract Func<string, int, Func<NotUsed, Task<UserFriend>>> GetUserFriendByInt { get; }
+        public abstract Func<ServiceCall<User, string>> CreateUser { get; }
+        public abstract Func<string, ServiceCall<NotUsed, UserWithId>> GetUser { get; }
+        public abstract Func<string, ServiceCall<NotUsed, Done>> DeleteUser { get; }
+        public abstract Func<string, ServiceCall<NotUsed, NotUsed>> HeadUser { get; }
+        public abstract Func<string, ServiceCall<NotUsed, NotUsed>> OptionsUser { get; }
+        public abstract Func<string, ServiceCall<User, Done>> PatchUser { get; }
+        public abstract Func<string, ServiceCall<User, Done>> PutUser { get; }
+        public abstract Func<string, ServiceCall<UserFriend, string>> CreateUserFriend { get; }
+        public abstract Func<string, string, ServiceCall<NotUsed, UserFriend>> GetUserFriend { get; }
+        public abstract Func<string, int, ServiceCall<NotUsed, UserFriend>> GetUserFriendByInt { get; }
 
         public override IDescriptor Descriptor => Named("test-service")
             .WithCalls(
@@ -34,6 +34,6 @@ namespace wyvern.api.tests.ioc
                 /* Test Route Constraints */
                 RestCall(Method.GET, "/api/user/{id}/friend-seq/{id2:int}", GetUserFriendByInt)
             );
-        
+
     }
 }

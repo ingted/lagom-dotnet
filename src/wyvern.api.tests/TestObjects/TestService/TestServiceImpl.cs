@@ -6,25 +6,25 @@ namespace wyvern.api.tests.ioc
 {
     public class TestServiceImpl : TestService
     {
-        public override Func<Func<User, Task<string>>> CreateUser 
-            => () => user => Task.FromResult("1");
-        public override Func<string, Func<NotUsed, Task<UserWithId>>> GetUser
-            => id => _ => Task.FromResult(new UserWithId { Id = "1", Name = "some_name" });
-        public override Func<string, Func<NotUsed, Task<Done>>> DeleteUser
-            => id => _ => Task.FromResult(Done.Instance);
-        public override Func<string, Func<NotUsed, Task<NotUsed>>> HeadUser
-            => id => _ => Task.FromResult(NotUsed.Instance);
-        public override Func<string, Func<NotUsed, Task<NotUsed>>> OptionsUser
-            => id => _ => Task.FromResult(NotUsed.Instance);
-        public override Func<string, Func<User, Task<Done>>> PatchUser
-            => id => user => Task.FromResult(Done.Instance);
-        public override Func<string, Func<User, Task<Done>>> PutUser
-            => id => user => Task.FromResult(Done.Instance);
-        public override Func<string, Func<UserFriend, Task<string>>> CreateUserFriend
-            => id => friend => Task.FromResult("1.1");
-        public override Func<string, string, Func<NotUsed, Task<UserFriend>>> GetUserFriend
-            => (id, id2) => _ => Task.FromResult(new UserFriend { Id = "1.1", Name = "some_friend_name" });
-        public override Func<string, int, Func<NotUsed, Task<UserFriend>>> GetUserFriendByInt
-            => (id, id2) => _ => Task.FromResult(new UserFriend { Id = "1.1", Name = "some_friend_name" });
+        public override Func<ServiceCall<User, string>> CreateUser
+            => () => new ServiceCall<User, string>(user => Task.FromResult("1"));
+        public override Func<string, ServiceCall<NotUsed, UserWithId>> GetUser
+            => id => new ServiceCall<NotUsed, UserWithId>(_ => Task.FromResult(new UserWithId { Id = "1", Name = "some_name" }));
+        public override Func<string, ServiceCall<NotUsed, Done>> DeleteUser
+            => id => new ServiceCall<NotUsed, Done>(_ => Task.FromResult(Done.Instance));
+        public override Func<string, ServiceCall<NotUsed, NotUsed>> HeadUser
+            => id => new ServiceCall<NotUsed, NotUsed>(_ => Task.FromResult(NotUsed.Instance));
+        public override Func<string, ServiceCall<NotUsed, NotUsed>> OptionsUser
+            => id => new ServiceCall<NotUsed, NotUsed>(_ => Task.FromResult(NotUsed.Instance));
+        public override Func<string, ServiceCall<User, Done>> PatchUser
+            => id => new ServiceCall<User, Done>(user => Task.FromResult(Done.Instance));
+        public override Func<string, ServiceCall<User, Done>> PutUser
+            => id => new ServiceCall<User, Done>(user => Task.FromResult(Done.Instance));
+        public override Func<string, ServiceCall<UserFriend, string>> CreateUserFriend
+            => id => new ServiceCall<UserFriend, string>(friend => Task.FromResult("1.1"));
+        public override Func<string, string, ServiceCall<NotUsed, UserFriend>> GetUserFriend
+            => (id, id2) => new ServiceCall<NotUsed, UserFriend>(_ => Task.FromResult(new UserFriend { Id = "1.1", Name = "some_friend_name" }));
+        public override Func<string, int, ServiceCall<NotUsed, UserFriend>> GetUserFriendByInt
+            => (id, id2) => new ServiceCall<NotUsed, UserFriend>(_ => Task.FromResult(new UserFriend { Id = "1.1", Name = "some_friend_name" }));
     }
 }

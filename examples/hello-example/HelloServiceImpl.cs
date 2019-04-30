@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
+using wyvern.examples.filters;
 using static HelloCommand;
 using static HelloEvent;
 

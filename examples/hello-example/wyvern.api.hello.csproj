@@ -11,10 +11,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\wyvern.api\wyvern.api.csproj" />
-    <ProjectReference Include="..\src\wyvern.entity\wyvern.entity.csproj" />
-    <ProjectReference Include="..\src\wyvern.utils\wyvern.utils.csproj" />
-    <ProjectReference Include="..\src\wyvern.visualize\wyvern.visualize.csproj" />
+    <ProjectReference Include="..\..\src\wyvern.api\wyvern.api.csproj" />
+    <ProjectReference Include="..\..\src\wyvern.entity\wyvern.entity.csproj" />
+    <ProjectReference Include="..\..\src\wyvern.utils\wyvern.utils.csproj" />
+    <ProjectReference Include="..\..\src\wyvern.visualize\wyvern.visualize.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />

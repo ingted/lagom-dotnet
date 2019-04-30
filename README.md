@@ -1,5 +1,6 @@
 # lagom-dotnet
-This is a .NET core port of Lightbend's Lagom framework using Akka.NET.
+
+This is a **work in progress** .NET core port of Lightbend's Lagom framework using Akka.NET.
 
 ## CI/CD
 
@@ -17,6 +18,7 @@ So far, the list of supported features are:
 - Topics of event streams (via AMQP)
 - WebSocket based event streams
 - Support for custom message serialization in topics
+- Roughly 40% unit test coverage
 
 Additionally, the following features may be handy:
 
@@ -25,7 +27,7 @@ Additionally, the following features may be handy:
 Things that have been skipped, not fully implemented, or may need rework:
 
 - Entities can be partitioned, but Topics and Read Side do not support partitioning yet
-- Limited test coverage
+- Partial support for header transformations
 
 ## Getting started with the example
 
@@ -37,8 +39,7 @@ example up and running.
 - Install dotnetcore 2.1
 - Install docker and docker-compose
 - Update `docker-compose.yml` and `./docker/db/Dockerfile` with an appropriate password for SQL Server
-- Run `docker-compose up db amqp` to start the SQL Server and ActiveMQ containers
-- Run `dotnet run` inside the `./example` folder
+- Run `docker-compose up` to start the SQL Server, ActiveMQ and API containers
 
 ### Usage
 

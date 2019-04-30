@@ -215,16 +215,18 @@ namespace wyvern.api.ioc
         {
             var (routeMapper, path) = ExtractRoutePath(router, call);
 
-            var mref = call.MethodRef.Method;
-            var mrefParams = mref.GetParameters();
-            var methodRefType = mref.ReturnType;
-            var requestType = methodRefType.GenericTypeArguments[0];
+            var route = call.MethodRef;
+            var routeMethod = call.MethodRef.Method;
+            var routeParameters = routeMethod.GetParameters();
+
+            var serviceCallType = routeMethod.ReturnType;
+            var requestType = serviceCallType.GenericTypeArguments[0];
 
             routeMapper(
                 path,
                 async (req, res, data) =>
                 {
-                    object[] mrefParamArray = mrefParams.Select(x =>
+                    object[] mrefParamArray = routeParameters.Select(x =>
                         {
                             var type = x.ParameterType;
                             var name = x.Name;
@@ -249,15 +251,21 @@ namespace wyvern.api.ioc
                         })
                         .ToArray();
 
-                    var propName = mref.Name.Substring(mref.Name.IndexOf("_") + 1, mref.Name.IndexOf(">") - (mref.Name.IndexOf("_") + 1));
-                    var prop = service.GetType().GetProperty(propName).GetMethod;
-                    var del = prop.Invoke(service, new object[] { }) as Delegate;
-                    var mres = del.DynamicInvoke(mrefParamArray) as Delegate;
+                    var serverServiceCall = route.DynamicInvoke(mrefParamArray);
+                    var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
+
+                    Func<RequestHeader, RequestHeader> headerFunc = (header) => RequestHeader.DEFAULT;
+                    var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new[] { headerFunc });
+                    var serviceCallInvoke = serverServiceCall.GetType().GetMethod("Invoke");
+
+                    // TODO: invoke header response..
+                    // TODO: Serialization, translations - add JWT/Principal
+                    //       translator
 
                     dynamic task;
                     if (requestType == typeof(NotUsed))
                     {
-                        task = mres.DynamicInvoke(NotUsed.Instance);
+                        task = serviceCallInvoke.Invoke(serviceCall, new object[] { NotUsed.Instance });
                     }
                     else
                     {
@@ -266,7 +274,7 @@ namespace wyvern.api.ioc
                             body = reader.ReadToEnd();
 
                         var obj = JsonConvert.DeserializeObject(body, requestType);
-                        task = mres.DynamicInvoke(obj);
+                        task = serviceCallInvoke.Invoke(serviceCall, new object[] { obj });
                     }
 
                     try

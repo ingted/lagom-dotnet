@@ -61,7 +61,7 @@ namespace wyvern.api.ioc
                 services.AddSingleton<Config>(config);
 
                 var actorSystem = ActorSystem.Create(name, config);
-                
+
                 services.AddSingleton<ActorSystem>(actorSystem);
                 foreach (var actorSystemDelegate in ActorSystemDelegates)
                     actorSystemDelegate.Invoke(actorSystem);

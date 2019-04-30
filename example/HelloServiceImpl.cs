@@ -10,6 +10,7 @@ using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 using Microsoft.Extensions.Logging;
+using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
 using static HelloCommand;
@@ -38,26 +39,33 @@ public class HelloServiceImpl : HelloService
         Serializer = serializer;
     }
 
-    public override Func<string, Func<NotUsed, Task<string>>> SayHello =>
-        name =>
-        async _ =>
-        {
-            var entity = Registry.RefFor<HelloEntity>(name);
-            var response = await entity.Ask<string>(new SayHelloCommand(name));
-            return response;
-        };
+    public override ServiceCall<NotUsed, string> SayHello(string name)
+        => Filters.Authenticated<NotUsed, string>(
+            async (userId) =>
+                await Task.FromResult(
+                    new ServerServiceCall<NotUsed, string>(
+                        async _ =>
+                        {
+                            var entity = Registry.RefFor<HelloEntity>(name);
+                            var response = await entity.Ask<string>(new SayHelloCommand(name));
+                            return response;
+                        }
+                    )
+                )
+        );
 
-    public override Func<string, Func<UpdateGreetingRequest, Task<string>>> UpdateGreeting =>
-        name =>
-        async req =>
-        {
-            var entity = Registry.RefFor<HelloEntity>(name);
-            var response = await entity.Ask<string>(new UpdateGreetingCommand(name, req.Message));
-            return response;
-        };
+    public override ServiceCall<UpdateGreetingRequest, string> UpdateGreeting(string name)
+        => new ServiceCall<UpdateGreetingRequest, string>(
+            async req =>
+            {
+                var entity = Registry.RefFor<HelloEntity>(name);
+                var response = await entity.Ask<string>(new UpdateGreetingCommand(name, req.Message));
+                return response;
+            }
+        );
 
-    public override Func<string, long, long, Func<WebSocket, Task>> HelloNameStream =>
-        (id, st, ed) =>
+    public override ServiceCall<WebSocket, Done> HelloNameStream(string id, long st, long ed)
+        => new ServiceCall<WebSocket, Done>(
         async webSocket =>
         {
             await WebSocketProducer.EntityStreamWithOffset<HelloEvent>(
@@ -76,10 +84,12 @@ public class HelloServiceImpl : HelloService
                     },
                     ActorSystem.Materializer()
                 );
-        };
+            return Done.Instance;
+        }
+    );
 
-    public override Func<long, Func<WebSocket, Task>> HelloStream =>
-        (st) =>
+    public override ServiceCall<WebSocket, Done> HelloStream(long st)
+        => new ServiceCall<WebSocket, Done>(
         async webSocket =>
         {
             await WebSocketProducer.StreamWithOffset<HelloEvent>(
@@ -98,7 +108,8 @@ public class HelloServiceImpl : HelloService
                     },
                     ActorSystem.Materializer()
                 );
-        };
+            return Done.Instance;
+        });
 
 
     public override Topic<HelloEvent> GreetingsTopic() =>

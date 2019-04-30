@@ -6,30 +6,48 @@ using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
 
-public abstract class HelloService : Service
+public abstract class HelloService : Service2
 {
     public class UpdateGreetingRequest
     {
         public string Message { get; set; }
     }
 
-    public abstract Func<string, Func<NotUsed, Task<string>>> SayHello { get; }
+    public abstract ServiceCall<NotUsed, string> SayHello(string name);
 
-    public abstract Func<string, Func<UpdateGreetingRequest, Task<string>>> UpdateGreeting { get; }
+    public abstract ServiceCall<UpdateGreetingRequest, string> UpdateGreeting(string name);
 
-    public abstract Func<string, long, long, Func<WebSocket, Task>> HelloNameStream { get; }
+    public abstract ServiceCall<WebSocket, Done> HelloNameStream(string id, long st, long ed);
 
-    public abstract Func<long, Func<WebSocket, Task>> HelloStream { get; }
+    public abstract ServiceCall<WebSocket, Done> HelloStream(long st);
 
     public abstract Topic<HelloEvent> GreetingsTopic();
 
     public override IDescriptor Descriptor =>
         Named("HelloService")
             .WithCalls(
-                RestCall(Method.GET, "/api/hello/{name}", SayHello),
-                RestCall(Method.POST, "/api/hello/{name}", UpdateGreeting),
-                StreamCall("/ws/hello/name", HelloNameStream),
-                StreamCall("/ws/hello", HelloStream)
+                RestCall(
+                    Method.GET,
+                    "/api/hello/{name}",
+                    (string name) =>
+                        SayHello(name)
+                ),
+                RestCall(
+                    Method.POST,
+                    "/api/hello/{name}",
+                    (string name) =>
+                        UpdateGreeting(name)
+                ),
+                StreamCall(
+                    "/ws/hello/name",
+                    (string id, long st, long ed) =>
+                        HelloNameStream(id, st, ed)
+                ),
+                StreamCall(
+                    "/ws/hello",
+                    (long st) =>
+                        HelloStream(st)
+                )
             )
             .WithTopics(
                 Topic("greetings-service", GreetingsTopic)

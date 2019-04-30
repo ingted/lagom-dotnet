@@ -37,6 +37,19 @@ namespace wyvern.utils
         }
 
         /// <summary>
+        /// Choose either the option value (if it has one) or the provided alternate
+        /// </summary>
+        /// <param name="o"></param>
+        /// <param name="e"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static T OrElseThrow<T>(this Option<T> o, Exception e)
+        {
+            if (o.HasValue) return o.Value;
+            throw e;
+        }
+
+        /// <summary>
         /// Map the input type to the output type via the given delegate
         /// </summary>
         /// <param name="o"></param>

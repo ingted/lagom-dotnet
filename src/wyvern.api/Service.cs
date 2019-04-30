@@ -6,6 +6,11 @@ using wyvern.utils;
 
 namespace wyvern.api
 {
+    public abstract class Service2 : Service
+    {
+
+    }
+
     /// <summary>
     /// Main entry point for converting requests to calls against various
     /// system endpoints
@@ -39,7 +44,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> PathCall<TRequest, TResponse>(
             string pathPattern,
-            Func<Func<TRequest, TResponse>> methodRef)
+            Func<ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -60,7 +65,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> PathCall<TA, TRequest, TResponse>(
             string pathPattern,
-            Func<TA, Func<TRequest, TResponse>> methodRef)
+            Func<TA, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -82,7 +87,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> PathCall<TA, TB, TRequest, TResponse>(
             string pathPattern,
-            Func<TA, TB, Func<TRequest, TResponse>> methodRef)
+            Func<TA, TB, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -105,7 +110,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> PathCall<TA, TB, TC, TRequest, TResponse>(
             string pathPattern,
-            Func<TA, TB, TC, Func<TRequest, TResponse>> methodRef)
+            Func<TA, TB, TC, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -127,7 +132,7 @@ namespace wyvern.api
         protected static ICall<TRequest, TResponse> RestCall<TRequest, TResponse>(
             Method method,
             string pathPattern,
-            Func<Func<TRequest, TResponse>> methodRef)
+            Func<ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -151,7 +156,7 @@ namespace wyvern.api
         protected static ICall<TRequest, TResponse> RestCall<TA, TRequest, TResponse>(
             Method method,
             string pathPattern,
-            Func<TA, Func<TRequest, TResponse>> methodRef)
+            Func<TA, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -176,7 +181,7 @@ namespace wyvern.api
         protected static ICall<TRequest, TResponse> RestCall<TA, TB, TRequest, TResponse>(
             Method method,
             string pathPattern,
-            Func<TA, TB, Func<TRequest, TResponse>> methodRef)
+            Func<TA, TB, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -203,7 +208,7 @@ namespace wyvern.api
         protected static ICall<TRequest, TResponse> RestCall<TA, TB, TC, TRequest, TResponse>(
             Method method,
             string pathPattern,
-            Func<TA, TB, TC, Func<TRequest, TResponse>> methodRef)
+            Func<TA, TB, TC, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -242,7 +247,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> StreamCall<TRequest, TResponse>(
             string pathPattern,
-            Func<Func<TRequest, TResponse>> methodRef)
+            Func<ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -264,7 +269,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> StreamCall<TA, TB, TC, TRequest, TResponse>(
             string pathPattern,
-            Func<TA, TB, TC, Func<TRequest, TResponse>> methodRef)
+            Func<TA, TB, TC, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {
@@ -286,7 +291,7 @@ namespace wyvern.api
         /// <returns></returns>
         protected static ICall<TRequest, TResponse> StreamCall<TA, TRequest, TResponse>(
             string pathPattern,
-            Func<TA, Func<TRequest, TResponse>> methodRef)
+            Func<TA, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {

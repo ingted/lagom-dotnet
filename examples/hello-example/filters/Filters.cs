@@ -7,8 +7,9 @@ namespace wyvern.examples.filters
 {
     public class Filters
     {
-        public static ServerServiceCall<TReq, TRes> Authenticated<TReq, TRes>(Func<string, Task<ServerServiceCall<TReq, TRes>>> authenticatedServiceCall)
-         => ServerServiceCall<TReq, TRes>.ComposeAsync(
+        public static ServerServiceCall<TReq, TRes> Authenticated<TReq, TRes>(
+                Func<string, Task<ServerServiceCall<TReq, TRes>>> authenticatedServiceCall
+            ) => ServerServiceCall<TReq, TRes>.ComposeAsync(
                 async (RequestHeader requestHeader) =>
                 {
                     var userId = "test";

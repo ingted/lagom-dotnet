@@ -254,12 +254,13 @@ namespace wyvern.api.ioc
                     var serverServiceCall = route.DynamicInvoke(mrefParamArray);
                     var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
 
-                    var filter = new Func<RequestHeader, RequestHeader>(header => {
+                    var filter = new Func<RequestHeader, RequestHeader>(header =>
+                    {
                         foreach (var (k, v) in req.Headers)
                             header = header.WithHeader(k, v);
                         return service.Descriptor.HeaderFilter.TransformServerRequest(header);
                     });
-                    
+
                     var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new object[] { filter });
                     var serviceCallInvoke = serverServiceCall.GetType().GetMethod("Invoke");
 

@@ -33,12 +33,14 @@ namespace wyvern.api.@internal.sharding
         {
             ActorSystem = actorSystem;
 
-            var persistenceConfig = ActorSystem.Settings.Config.GetConfig("wyvern.persistence");
-            AskTimeout = persistenceConfig.GetTimeSpan("ask-timeout", allowInfinite: false);
+            var persistenceConfig = ActorSystem.Settings.Config
+                .WithFallback(@"wyvern.persistence {}")
+                .GetConfig("wyvern.persistence");
+            AskTimeout = persistenceConfig.GetTimeSpan("ask-timeout", 5.0d.seconds(), false);
             MaxNumberOfShards = Math.Max(persistenceConfig.GetInt("max-number-of-shards", 1), 1);
-            var role = persistenceConfig.GetString("run-entities-on-role");
+            var role = persistenceConfig.GetString("run-entities-on-role", "");
             Role = string.IsNullOrWhiteSpace(role) ? Option<string>.None : new Option<string>(role);
-            SnapshotAfter = persistenceConfig.GetInt("snapshot-after", 10);
+            SnapshotAfter = persistenceConfig.GetInt("snapshot-after", 100);
 
             Sharding = ClusterSharding.Get(ActorSystem);
             ShardingSettings = ClusterShardingSettings

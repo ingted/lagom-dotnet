@@ -30,7 +30,23 @@ namespace wyvern.api.ioc
                 StandardOutLogger.DebugColor = ConsoleColor.DarkGray;
 
                 // Prepare config root
-                var configRoot = ConfigurationFactory.Empty;
+                var configRoot = ConfigurationFactory.ParseString(@"akka {
+    actor {
+        provider = cluster
+    }
+    cluster {
+        seed-nodes = [""akka.tcp://ClusterSystem@localhost:7000""]
+        roles = [ ""default"" ]
+    }
+    loglevel = INFO
+    remote {
+        dot-netty.tcp {
+            hostname = 127.0.0.1
+            port = 7000
+            public-hostname = ""localhost""
+        }
+    }
+}");
 
                 // Load Akka config values from environment variables first
                 foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())

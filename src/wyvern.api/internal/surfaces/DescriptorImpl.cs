@@ -28,16 +28,18 @@ namespace wyvern.api.@internal.surfaces
         /// Descriptor
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="headerFilter"></param>
         /// <param name="calls"></param>
         /// <param name="topics"></param>
         /// <returns></returns>
         private DescriptorImpl(
             string name,
+            IHeaderFilter headerFilter,
             ImmutableArray<ICall> calls,
             ImmutableArray<ITopicCall> topics)
         {
-            (Name, Calls, Topics) =
-                (name, calls, topics);
+            (Name, HeaderFilter, Calls, Topics) =
+                (name, headerFilter, calls, topics);
         }
 
         /// <summary>
@@ -45,6 +47,11 @@ namespace wyvern.api.@internal.surfaces
         /// </summary>
         /// <value></value>
         public string Name { get; }
+
+        /// <summary>
+        /// Header filter (Default: UserAgentHeaderFilter)
+        /// </summary>
+        public IHeaderFilter HeaderFilter { get; } = new UserAgentHeaderFilter();
 
         /// <summary>
         /// Calls
@@ -57,6 +64,21 @@ namespace wyvern.api.@internal.surfaces
         /// </summary>
         /// <value></value>
         public ImmutableArray<ITopicCall> Topics { get; }
+
+        /// <summary>
+        /// Replace the header filter implementation
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public IDescriptor WithHeaderFilter(IHeaderFilter filter)
+        {
+            return new DescriptorImpl(
+                Name,
+                filter,
+                Calls,
+                Topics
+            );
+        }
 
         /// <summary>
         /// Add an array of calls to the descriptor
@@ -96,7 +118,7 @@ namespace wyvern.api.@internal.surfaces
         /// <returns></returns>
         private IDescriptor ReplaceAllCalls(params ICall[] calls)
         {
-            return new DescriptorImpl(Name, Calls.AddRange(calls), Topics);
+            return new DescriptorImpl(Name, HeaderFilter, Calls.AddRange(calls), Topics);
         }
 
         /// <summary>
@@ -106,7 +128,7 @@ namespace wyvern.api.@internal.surfaces
         /// <returns></returns>
         private IDescriptor ReplaceAllTopics(params ITopicCall[] topics)
         {
-            return new DescriptorImpl(Name, Calls, Topics.AddRange(topics));
+            return new DescriptorImpl(Name, HeaderFilter, Calls, Topics.AddRange(topics));
         }
     }
 }

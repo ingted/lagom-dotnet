@@ -15,6 +15,8 @@ public abstract class HelloService : Service2
 
     public abstract ServiceCall<NotUsed, string> SayHello(string name);
 
+    public abstract ServiceCall<NotUsed, string> SayHelloAuthenticated();
+
     public abstract ServiceCall<UpdateGreetingRequest, string> UpdateGreeting(string name);
 
     public abstract ServiceCall<WebSocket, Done> HelloNameStream(string id, long st, long ed);
@@ -31,6 +33,11 @@ public abstract class HelloService : Service2
                     "/api/hello/{name}",
                     (string name) =>
                         SayHello(name)
+                ),
+                RestCall(
+                    Method.GET,
+                    "/api/hello",
+                    SayHelloAuthenticated
                 ),
                 RestCall(
                     Method.POST,

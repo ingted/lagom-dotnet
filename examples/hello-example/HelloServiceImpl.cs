@@ -16,6 +16,7 @@ using wyvern.api.@internal.surfaces;
 using wyvern.examples.filters;
 using static HelloCommand;
 using static HelloEvent;
+using static wyvern.examples.filters.Filters;
 
 public class HelloServiceImpl : HelloService
 {
@@ -41,14 +42,24 @@ public class HelloServiceImpl : HelloService
     }
 
     public override ServiceCall<NotUsed, string> SayHello(string name)
-        => Filters.Authenticated<NotUsed, string>(
-            async (userId) =>
+        => new ServerServiceCall<NotUsed, string>(
+            async _ =>
+            {
+                var entity = Registry.RefFor<HelloEntity>(name);
+                var response = await entity.Ask(new SayHelloCommand(name));
+                return response;
+            }
+        );
+
+    public override ServiceCall<NotUsed, string> SayHelloAuthenticated()
+        => Authenticated(
+            async user =>
                 await Task.FromResult(
                     new ServerServiceCall<NotUsed, string>(
                         async _ =>
                         {
-                            var entity = Registry.RefFor<HelloEntity>(name);
-                            var response = await entity.Ask<string>(new SayHelloCommand(name));
+                            var entity = Registry.RefFor<HelloEntity>(user.Name);
+                            var response = await entity.Ask(new SayHelloCommand(user.Name));
                             return response;
                         }
                     )

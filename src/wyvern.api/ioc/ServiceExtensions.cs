@@ -254,30 +254,18 @@ namespace wyvern.api.ioc
                     var serverServiceCall = route.DynamicInvoke(mrefParamArray);
                     var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
 
-                    // TODO: Make this injectable.
-                    Func<RequestHeader, RequestHeader> headerFunc = (header) =>
-                        {
-                            var n = header;
-                            foreach (var h in req.Headers)
-                                n = n.WithHeaders(h.Key, h.Value);
-                            if (n.Headers.ContainsKey("Authorization"))
-                            {
-                                // TODO: Read, validate, transform the token
-                                n = n.WithPrincipal(
-                                    new Principal(
-                                        n.Headers["Authorization"].First()
-                                    )
-                                );
-                            }
-                            return n;
-                        };
-
-                    var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new[] { headerFunc });
+                    var filter = new Func<RequestHeader, RequestHeader>(header => {
+                        foreach (var (k, v) in req.Headers)
+                            header = header.WithHeader(k, v);
+                        return service.Descriptor.HeaderFilter.TransformServerRequest(header);
+                    });
+                    
+                    var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new object[] { filter });
                     var serviceCallInvoke = serverServiceCall.GetType().GetMethod("Invoke");
 
-                    // TODO: invoke header response
-                    // TODO: Serialization, translations - add JWT/Principal
-                    //       translator
+                    // TODO: translate the header response
+                    // Note, header response should have HTTP Status Code embedded
+                    // Better handling for the exceptions and exception mapping...
 
                     dynamic task;
                     if (requestType == typeof(NotUsed))

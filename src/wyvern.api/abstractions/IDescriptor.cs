@@ -16,6 +16,13 @@ namespace wyvern.api.abstractions
         string Name { get; }
 
         /// <summary>
+        /// Header filter
+        /// </summary>
+        IHeaderFilter HeaderFilter { get; }
+
+        // TODO: ExceptionSerializer
+
+        /// <summary>
         /// Calls
         /// </summary>
         /// <value></value>

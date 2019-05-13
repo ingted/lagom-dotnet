@@ -47,5 +47,12 @@ namespace wyvern.api.abstractions
         /// <param name="topics"></param>
         /// <returns></returns>
         IDescriptor WithTopics(params ITopicCall[] topics);
+
+        /// <summary>
+        /// Apply filters to the headers
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        IDescriptor WithHeaderFilter(IHeaderFilter filter);
     }
 }

@@ -81,9 +81,7 @@ namespace wyvern.api.ioc
 
                     var resType = mref.Method.ReturnType
                         .GenericTypeArguments[1];
-                    var first = call.MethodRef.Method.Name.IndexOf("<get_") + 5;
-                    var second = call.MethodRef.Method.Name.IndexOf(">");
-                    var method_ref_name = call.MethodRef.Method.Name.Substring(first, second - first);
+                    var method_ref_name = call.MethodRef.Method.Name;
                     var operation = new Operation()
                     {
                         OperationId = method_ref_name,

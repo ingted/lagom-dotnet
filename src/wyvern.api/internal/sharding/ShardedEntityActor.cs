@@ -158,16 +158,18 @@ namespace wyvern.api.@internal.sharding
 
         private bool HandleCommand(Type commandType, object message)
         {
+
+            var commandContext = newContext(Sender, SqlConnectionFactory);
+
             if (!CommandHandlers.TryGetValue(commandType, out var commandHandler))
             {
                 Log.Warning($"Unknown command type received: {commandType}");
+                commandContext.InvalidCommand($"{commandType}");
                 return false;
             }
 
             // TODO: possible to have ambiguous match, ignore this for a bit..
             //var replyType = commandType.GetInterface(typeof(IReplyType<>).Name).GetGenericArguments()[0];
-
-            var commandContext = newContext(Sender, SqlConnectionFactory);
 
             try
             {
@@ -280,12 +282,7 @@ namespace wyvern.api.@internal.sharding
             // Normal command handler
             if (message is TC)
             {
-                var handled = HandleCommand(commandType, message);
-                if (!handled)
-                {
-                    var commandContext = newContext(Sender, SqlConnectionFactory);
-                    commandContext.InvalidCommand("Invalid command");
-                }
+                HandleCommand(commandType, message);
             }
             // Successful snapshot retention
             else if (commandType == typeof(SaveSnapshotSuccess))

@@ -32,6 +32,10 @@ namespace wyvern.api.@internal.readside
 
         public override void Register<TE>(Func<ReadSideProcessor<TE>> processorFactory)
         {
+            /*
+                If Config.role is empty, then we assume we should run
+                this on the current cluster node
+            */
             if (!Config.Role.ForAll(Cluster.Get(System).SelfRoles.Contains))
                 return;
 

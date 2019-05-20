@@ -9,6 +9,7 @@ using Akka.Configuration;
 using Akka.Event;
 using Microsoft.Extensions.DependencyInjection;
 using wyvern.api.abstractions;
+using wyvern.bootstrap.Docker;
 using wyvern.utils;
 
 namespace wyvern.api.ioc
@@ -56,9 +57,9 @@ namespace wyvern.api.ioc
                     .Aggregate(
                         configRoot,
                         (acc, cur) => acc.WithFallback(File.ReadAllText(cur.Item2))
-                    ).BootstrapFromDocker(false);
-
-                // TODO: Bootstram from docker
+                    )
+                    .BootstrapFromDocker(false)
+                    .BootstrapRolesFromDocker();
 
                 var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
 

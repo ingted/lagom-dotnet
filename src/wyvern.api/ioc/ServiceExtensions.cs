@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using wyvern.api.abstractions;
 using wyvern.api.exceptions;
@@ -82,6 +83,7 @@ namespace wyvern.api.ioc
         {
             var services = app.ApplicationServices;
             var reactiveServices = services.GetService<IReactiveServices>();
+            var apiContractResolver = services.GetService<IContractResolver>();
 
             void ServiceIterator(Action<Service, Type> x)
             {
@@ -120,7 +122,7 @@ namespace wyvern.api.ioc
                         switch (call.CallId)
                         {
                             case RestCallId _:
-                                RegisterCall(router, service, call);
+                                RegisterCall(router, service, call, apiContractResolver);
                                 break;
                             case StreamCallId _:
                                 RegisterStream(router, service, serviceType, call, app);
@@ -211,8 +213,14 @@ namespace wyvern.api.ioc
         /// <param name="service"></param>
         /// <param name="serviceType"></param>
         /// <param name="call"></param>
-        private static void RegisterCall(IRouteBuilder router, Service service, ICall call)
+        private static void RegisterCall(IRouteBuilder router, Service service, ICall call, IContractResolver apiContractResolver)
         {
+            var serializerSettings = new JsonSerializerSettings
+            {
+                ContractResolver = apiContractResolver ?? new CamelCasePropertyNamesContractResolver(),
+                Formatting = Formatting.Indented
+            };
+
             var (routeMapper, path) = ExtractRoutePath(router, call);
 
             var route = call.MethodRef;
@@ -279,7 +287,7 @@ namespace wyvern.api.ioc
                         using (var reader = new StreamReader(req.Body, Encoding.UTF8, true, 1024, true))
                             body = reader.ReadToEnd();
 
-                        var obj = JsonConvert.DeserializeObject(body, requestType);
+                        var obj = JsonConvert.DeserializeObject(body, requestType, serializerSettings);
                         task = serviceCallInvoke.Invoke(serviceCall, new object[] { obj });
                     }
 
@@ -292,9 +300,10 @@ namespace wyvern.api.ioc
                     catch (Exception ex)
                     {
                         if (ex is StatusCodeException) throw;
+                        // TODO: Add cors headers to allow repsonse
                         res.StatusCode = 500;
                         var result = task.Result as Exception;
-                        var jsonString = JsonConvert.SerializeObject(result.Message);
+                        var jsonString = JsonConvert.SerializeObject(result.Message, serializerSettings);
                         byte[] content = Encoding.UTF8.GetBytes(jsonString);
                         res.ContentType = "application/json";
                         await res.Body.WriteAsync(content, 0, content.Length);
@@ -303,8 +312,7 @@ namespace wyvern.api.ioc
 
                     {
                         var result = task.Result;
-
-                        var jsonString = JsonConvert.SerializeObject(result);
+                        var jsonString = JsonConvert.SerializeObject(result, serializerSettings);
                         byte[] content = Encoding.UTF8.GetBytes(jsonString);
                         res.ContentType = "application/json";
                         await res.Body.WriteAsync(content, 0, content.Length);

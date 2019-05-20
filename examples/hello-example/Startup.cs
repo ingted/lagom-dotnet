@@ -8,12 +8,18 @@ using wyvern.utils;
 using static wyvern.api.ioc.ServiceExtensions;
 using Akka.Event;
 using System;
+using Newtonsoft.Json.Serialization;
 
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddCors();
+
+        // Serializer used in API calls (optional, can use default)
+        services.AddSingleton<IContractResolver>(
+            x => new CamelCasePropertyNamesContractResolver()
+        );
 
         services.AddShardedEntities(x =>
         {

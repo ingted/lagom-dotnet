@@ -14,8 +14,10 @@ namespace wyvern.api.@internal.readside
         public double RandomBackoffFactor { get; } = 0.2d;
         public Option<string> Role { get; } = Option<string>.None;
 
-        public ReadSideConfig(Config configuration)
+        public ReadSideConfig(Config config)
         {
+            var configuration = config.GetConfig("wyvern.persistence.read-side")
+                .WithFallback(Config.Empty);
             GlobalPrepareTimeout = configuration.GetTimeSpan("global-prepare-timeout", GlobalPrepareTimeout);
             MinBackoff = configuration.GetTimeSpan("failure-exponential-backoff.min", MinBackoff);
             MaxBackoff = configuration.GetTimeSpan("failure-exponential-backoff.max", MaxBackoff);

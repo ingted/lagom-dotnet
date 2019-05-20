@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Akka.Actor;
+using Akka.Bootstrap.Docker;
 using Akka.Configuration;
 using Akka.Event;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,23 +31,7 @@ namespace wyvern.api.ioc
                 StandardOutLogger.DebugColor = ConsoleColor.DarkGray;
 
                 // Prepare config root
-                var configRoot = ConfigurationFactory.ParseString(@"akka {
-    actor {
-        provider = cluster
-    }
-    cluster {
-        seed-nodes = [""akka.tcp://ClusterSystem@localhost:7000""]
-        roles = [ ""default"" ]
-    }
-    loglevel = INFO
-    remote {
-        dot-netty.tcp {
-            hostname = 127.0.0.1
-            port = 7000
-            public-hostname = ""localhost""
-        }
-    }
-}");
+                var configRoot = ConfigurationFactory.Empty;
 
                 // Load Akka config values from environment variables first
                 foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -71,10 +56,14 @@ namespace wyvern.api.ioc
                     .Aggregate(
                         configRoot,
                         (acc, cur) => acc.WithFallback(File.ReadAllText(cur.Item2))
-                    );
+                    ).BootstrapFromDocker(false);
+
+                // TODO: Bootstram from docker
+
                 var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
 
                 services.AddSingleton<Config>(config);
+
 
                 var actorSystem = ActorSystem.Create(name, config);
 

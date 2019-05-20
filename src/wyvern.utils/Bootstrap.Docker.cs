@@ -42,7 +42,7 @@ namespace wyvern.bootstrap.Docker
             {
                 var seeds = clusterRoles.Split(",");
                 var injectedRoleConfigString =
-                    "akka.remote.cluster.roles=[\"" +
+                    "akka.cluster.roles=[\"" +
                         String.Join("\",\"", seeds) +
                     "\"]";
                 input = ConfigurationFactory.ParseString(

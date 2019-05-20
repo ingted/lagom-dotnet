@@ -24,7 +24,7 @@ namespace wyvern.bootstrap.Docker
         ///     var config = HoconLoader.FromFile("myHocon.hocon");
         ///     var myActorSystem = ActorSystem.Create("mySys", config.BootstrapFromDocker());
         /// </example>
-        public static Config BootstrapFromDocker(this Config input)
+        public static Config BootstrapRolesFromDocker(this Config input)
         {
             var clusterRoles = Environment.GetEnvironmentVariable("CLUSTER_ROLES")?.Trim();
 

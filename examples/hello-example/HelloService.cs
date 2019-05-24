@@ -6,7 +6,7 @@ using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
 
-public abstract class HelloService : Service2
+public abstract class HelloService : Service
 {
     public class UpdateGreetingRequest
     {

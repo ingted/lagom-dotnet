@@ -6,10 +6,6 @@ using wyvern.utils;
 
 namespace wyvern.api
 {
-    public abstract class Service2 : Service
-    {
-
-    }
 
     /// <summary>
     /// Main entry point for converting requests to calls against various
@@ -209,6 +205,63 @@ namespace wyvern.api
             Method method,
             string pathPattern,
             Func<TA, TB, TC, ServiceCall<TRequest, TResponse>> methodRef)
+        where TRequest : class
+        where TResponse : class
+        {
+            if (pathPattern == null) throw new ArgumentNullException(nameof(pathPattern));
+            return new Call<TRequest, TResponse>(
+                new RestCallId(method, pathPattern),
+                methodRef
+            );
+        }
+
+        /// <summary>
+        /// Creates a REST call type from Request to Response type with a double
+        /// parameter
+        /// </summary>
+        /// <param name="method">HTTP method used</param>
+        /// <param name="pathPattern">URL pattern used to create the route (supports parameter substitution)</param>
+        /// <param name="methodRef">Reference to the method used to handle the call</param>
+        /// <typeparam name="TA">First generic type extracted from the URL</typeparam>
+        /// <typeparam name="TB">Second generic type extracted from the URL</typeparam>
+        /// <typeparam name="TC">Third generic type extracted from the URL</typeparam>
+        /// <typeparam name="TD">Fourth generic type extracted from the URL</typeparam>
+        /// <typeparam name="TRequest">Request type (deserialized from body of HTTP request)</typeparam>
+        /// <typeparam name="TResponse">Response type (serialized into HTTP response)</typeparam>
+        /// <returns></returns>
+        protected static ICall<TRequest, TResponse> RestCall<TA, TB, TC, TD, TRequest, TResponse>(
+            Method method,
+            string pathPattern,
+            Func<TA, TB, TC, TD, ServiceCall<TRequest, TResponse>> methodRef)
+        where TRequest : class
+        where TResponse : class
+        {
+            if (pathPattern == null) throw new ArgumentNullException(nameof(pathPattern));
+            return new Call<TRequest, TResponse>(
+                new RestCallId(method, pathPattern),
+                methodRef
+            );
+        }
+
+        /// <summary>
+        /// Creates a REST call type from Request to Response type with a double
+        /// parameter
+        /// </summary>
+        /// <param name="method">HTTP method used</param>
+        /// <param name="pathPattern">URL pattern used to create the route (supports parameter substitution)</param>
+        /// <param name="methodRef">Reference to the method used to handle the call</param>
+        /// <typeparam name="TA">First generic type extracted from the URL</typeparam>
+        /// <typeparam name="TB">Second generic type extracted from the URL</typeparam>
+        /// <typeparam name="TC">Third generic type extracted from the URL</typeparam>
+        /// <typeparam name="TD">Fourth generic type extracted from the URL</typeparam>
+        /// <typeparam name="TE">Fifth generic type extracted from the URL</typeparam>
+        /// <typeparam name="TRequest">Request type (deserialized from body of HTTP request)</typeparam>
+        /// <typeparam name="TResponse">Response type (serialized into HTTP response)</typeparam>
+        /// <returns></returns>
+        protected static ICall<TRequest, TResponse> RestCall<TA, TB, TC, TD, TE, TRequest, TResponse>(
+            Method method,
+            string pathPattern,
+            Func<TA, TB, TC, TD, TE, ServiceCall<TRequest, TResponse>> methodRef)
         where TRequest : class
         where TResponse : class
         {

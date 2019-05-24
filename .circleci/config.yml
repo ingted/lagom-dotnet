@@ -6,19 +6,19 @@ jobs:
     steps:
       - checkout
       - run: dotnet build
-      - run: dotnet test --no-build --logger "trx"
-      - run:
-          name: test results
-          command: |
-            dotnet tool install -g trx2junit
-            export PATH="$PATH:/root/.dotnet/tools"
-            trx2junit src/wyvern.api.tests/TestResults/*.trx --output TestResults/wyvern.api.tests/
-            trx2junit src/wyvern.utils.tests/TestResults/*.trx --output TestResults/wyvern.utils.tests/
-      - store_test_results:
-          path: TestResults
-      - store_artifacts:
-          path: TestResults
-          destination: TestResults
+      # - run: dotnet test --no-build --logger "trx"
+      # - run:
+      #     name: test results
+      #     command: |
+      #       dotnet tool install -g trx2junit
+      #       export PATH="$PATH:/root/.dotnet/tools"
+      #       trx2junit src/wyvern.api.tests/TestResults/*.trx --output TestResults/wyvern.api.tests/
+      #       trx2junit src/wyvern.utils.tests/TestResults/*.trx --output TestResults/wyvern.utils.tests/
+      # - store_test_results:
+      #     path: TestResults
+      # - store_artifacts:
+      #     path: TestResults
+      #     destination: TestResults
       - run:
           name: pack
           command: |

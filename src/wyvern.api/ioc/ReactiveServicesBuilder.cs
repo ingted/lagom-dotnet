@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Configuration;
 using Akka.Event;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using wyvern.api.abstractions;
 using wyvern.bootstrap.Docker;
@@ -60,15 +62,24 @@ namespace wyvern.api.ioc
                     )
                     .BootstrapFromDocker(false)
                     .BootstrapRolesFromDocker();
-
-                var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
-
                 services.AddSingleton<Config>(config);
 
-
+                // Create actor system
+                var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
                 var actorSystem = ActorSystem.Create(name, config);
-
-                services.AddSingleton<ActorSystem>(actorSystem);
+                services.AddSingleton<ActorSystem>(x =>
+                {
+                    var appLifetime = x.GetService<IApplicationLifetime>();
+                    appLifetime.ApplicationStopping.Register(() =>
+                    {
+                        actorSystem.Log.Warning("Host terminating, starting coordinated shutdown on this node");
+                        var shutdownTask = CoordinatedShutdown
+                                .Get(actorSystem)
+                                .Run(CoordinatedShutdown.ClrExitReason.Instance);
+                        shutdownTask.Wait();
+                    });
+                    return actorSystem;
+                });
                 foreach (var actorSystemDelegate in ActorSystemDelegates)
                     actorSystemDelegate.Invoke(actorSystem);
             });

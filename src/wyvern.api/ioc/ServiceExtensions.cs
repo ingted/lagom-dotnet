@@ -35,9 +35,6 @@ namespace wyvern.api.ioc
             void Consume(RouteCollection collection);
         }
 
-        [Obsolete("WARNING: need to remove this for unit tests to work properly")]
-        static ReactiveServicesOption Options;
-
         /// <summary>
         /// Add the main reactive services components, including swagger generation
         /// </summary>
@@ -47,7 +44,7 @@ namespace wyvern.api.ioc
         public static IServiceCollection AddReactiveServices(this IServiceCollection services,
             Action<IReactiveServicesBuilder> builderDelegate, ReactiveServicesOption options)
         {
-            Options = options;
+            services.AddSingleton(new ReactiveServicesOptions(options));
 
             // Add reactive services core
             var builder = new ReactiveServicesBuilder();
@@ -55,13 +52,13 @@ namespace wyvern.api.ioc
             services.AddSingleton(builder.Build(services));
 
             // Optionally, expose reactive services via API
-            if (Options.HasFlag(ReactiveServicesOption.WithApi))
+            if (options.HasFlag(ReactiveServicesOption.WithApi))
             {
                 // Routing for mapping HTTP URLs in Kestrel
                 services.AddRouting();
 
                 // Swagger generation
-                if (Options.HasFlag(ReactiveServicesOption.WithSwagger))
+                if (options.HasFlag(ReactiveServicesOption.WithSwagger))
                 {
                     services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ReactiveServicesApiDescriptionGroupProvider>();
                     services.AddSwaggerGen(c =>
@@ -81,7 +78,9 @@ namespace wyvern.api.ioc
 
         public static IApplicationBuilder UseReactiveServices(this IApplicationBuilder app)
         {
+
             var services = app.ApplicationServices;
+            var options = services.GetService<ReactiveServicesOptions>().Options;
             var reactiveServices = services.GetService<IReactiveServices>();
             var apiContractResolver = services.GetService<IContractResolver>();
 
@@ -92,7 +91,7 @@ namespace wyvern.api.ioc
             }
 
             // Register any service bound topics
-            if (Options.HasFlag(ReactiveServicesOption.WithTopics))
+            if (options.HasFlag(ReactiveServicesOption.WithTopics))
             {
                 ServiceIterator((service, serviceType) =>
                 {
@@ -110,7 +109,7 @@ namespace wyvern.api.ioc
             app.UseWebSockets();
 
             // Build the API components
-            if (Options.HasFlag(ReactiveServicesOption.WithApi))
+            if (options.HasFlag(ReactiveServicesOption.WithApi))
             {
                 var router = new RouteBuilder(app);
 
@@ -135,7 +134,7 @@ namespace wyvern.api.ioc
                 });
 
                 // Visualization components
-                if (Options.HasFlag(ReactiveServicesOption.WithVisualizer))
+                if (options.HasFlag(ReactiveServicesOption.WithVisualizer))
                     AddVisualizer(router);
 
                 // Build the API
@@ -145,7 +144,7 @@ namespace wyvern.api.ioc
                 app.UseRouter(routes);
 
                 // Optionally, add swagger components
-                if (Options.HasFlag(ReactiveServicesOption.WithSwagger))
+                if (options.HasFlag(ReactiveServicesOption.WithSwagger))
                 {
                     var config = services.GetService<IConfiguration>();
                     var swaggerDocsApiName = config.GetValue<string>("SwaggerDocs:ApiName", "My API V1");

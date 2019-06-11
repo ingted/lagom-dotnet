@@ -12,19 +12,11 @@ using wyvern.entity.state;
 
 namespace wyvern.api.abstractions
 {
-    public interface IShardedEntityRegistry
+    public interface IShardedEntityRegistryBase
     {
-        Source<KeyValuePair<TE, Offset>, NotUsed> EventStream<TE>(AggregateEventTag instance, Offset fromOffset)
-            where TE : AggregateEvent<TE>;
-
-        Source<KeyValuePair<TE, Offset>, NotUsed> EventStream<TE>(
-            AggregateEventTag aggregateTag,
-            string persistenceId,
-            Offset fromOffset = null,
-            Offset toOffset = null
-        ) where TE : AggregateEvent<TE>;
-
-        IShardedEntityReference RefFor<T>(string entityId) where T : class;
+        IShardedEntityReference RefFor<T>(
+            string entityId
+        ) where T : class;
 
         void Register<T, TC, TE, TS>(Func<T> entityFactory)
             where T : ShardedEntity<TC, TE, TS>
@@ -33,5 +25,35 @@ namespace wyvern.api.abstractions
             where TS : AbstractState;
 
         Task Terminate();
+    }
+
+    public interface IShardedEntityRegistry : IShardedEntityRegistryBase
+    {
+        Source<KeyValuePair<TE, Offset>, NotUsed> EventStream<TE>(
+            AggregateEventTag instance,
+            Offset fromOffset
+        ) where TE : AggregateEvent<TE>;
+
+        Source<KeyValuePair<TE, Offset>, NotUsed> EventStream<TE>(
+            AggregateEventTag aggregateTag,
+            string persistenceId,
+            Offset fromOffset = null,
+            Offset toOffset = null
+        ) where TE : AggregateEvent<TE>;
+    }
+
+    public interface IShardedEntityRegistry2 : IShardedEntityRegistryBase
+    {
+        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> EventStream(
+            AggregateEventTag instance,
+            Offset fromOffset
+        );
+
+        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> EventStream(
+            AggregateEventTag aggregateTag,
+            string persistenceId,
+            Offset fromOffset = null,
+            Offset toOffset = null
+        );
     }
 }

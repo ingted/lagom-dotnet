@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,7 +23,7 @@ using wyvern.utils;
 
 namespace wyvern.api.@internal.sharding
 {
-    internal class ShardedEntityRegistry : IShardedEntityRegistry
+    internal class ShardedEntityRegistry : IShardedEntityRegistry, IShardedEntityRegistry2
     {
         /// <summary>
         /// Registry for entities to be processed using the given actor system
@@ -220,7 +220,28 @@ namespace wyvern.api.@internal.sharding
             var startingOffset = MapStartingOffset(fromOffset);
 
             return queries.EventsByTag(tag, startingOffset)
-                .Select(env => KeyValuePair.Create(env.Event as E, env.Offset));
+                .Select(env => KeyValuePair.Create(
+                    env.Event as E,
+                    env.Offset
+                ));
+        }
+
+        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> IShardedEntityRegistry2.EventStream(AggregateEventTag aggregateTag, Offset fromOffset)
+        {
+            if (!EventsByTagQuery.HasValue)
+                throw new InvalidOperationException("No support for streaming events by tag");
+
+            var queries = EventsByTagQuery.Value;
+            var tag = aggregateTag.Tag;
+
+            Offset MapStartingOffset(Offset o) => o;
+            var startingOffset = MapStartingOffset(fromOffset);
+
+            return queries.EventsByTag(tag, startingOffset)
+                .Select(env => KeyValuePair.Create(
+                    env,
+                    env.Offset
+                ));
         }
 
         public Source<KeyValuePair<E, Offset>, NotUsed> EventStream<E>(
@@ -249,6 +270,28 @@ namespace wyvern.api.@internal.sharding
                         ((Sequence)toOffset).Value
                 )
                 .Select(env => KeyValuePair.Create(env.Event as E, env.Offset));
+        }
+
+        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> IShardedEntityRegistry2.EventStream(AggregateEventTag aggregateTag, string persistenceId, Offset fromOffset, Offset toOffset)
+        {
+            if (!EventsByPersistenceIdQuery.HasValue)
+                throw new InvalidOperationException(
+                    "No support for streaming events by persistence id"
+                );
+
+            var queries = EventsByPersistenceIdQuery.Value;
+            var tag = aggregateTag.Tag;
+
+            return queries.EventsByPersistenceId(
+                    persistenceId,
+                    fromOffset == null ?
+                        0L :
+                        ((Sequence)fromOffset).Value,
+                    toOffset == null ?
+                        Int64.MaxValue :
+                        ((Sequence)toOffset).Value
+                )
+                .Select(env => KeyValuePair.Create(env, env.Offset));
         }
 
 

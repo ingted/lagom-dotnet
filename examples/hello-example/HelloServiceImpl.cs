@@ -10,6 +10,7 @@ using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
@@ -88,9 +89,13 @@ public class HelloServiceImpl : HelloService
                     id, st, ed,
                     (env) =>
                     {
-                        var (@event, offset) = env;
-                        var message = @event;
-                        var obj = Newtonsoft.Json.JsonConvert.SerializeObject(message);
+                        // TODO: Transformation.
+                        var message = new
+                        {
+                            EntityId = env.EntityId,
+                            EventArgs = env.Event
+                        };
+                        var obj = JsonConvert.SerializeObject(message);
                         var msg = Encoding.ASCII.GetBytes(obj);
                         return msg;
                     },
@@ -112,8 +117,12 @@ public class HelloServiceImpl : HelloService
                     st,
                     (env) =>
                     {
-                        var (@event, offset) = env;
-                        var message = @event;
+                        // TODO: Transformation.
+                        var message = new
+                        {
+                            EntityId = env.EntityId,
+                            EventArgs = env.Event
+                        };
                         var obj = Newtonsoft.Json.JsonConvert.SerializeObject(message);
                         var msg = Encoding.ASCII.GetBytes(obj);
                         return msg;
@@ -128,9 +137,10 @@ public class HelloServiceImpl : HelloService
         TopicProducer.SingleStreamWithOffset<HelloEvent>(
             fromOffset =>
             {
-                var stream = Registry.EventStream<HelloEvent>(
-                    HelloEventTag.Instance, fromOffset
-                );
+                var stream = (Registry as IShardedEntityRegistry1)
+                    .EventStream<HelloEvent>(
+                        HelloEventTag.Instance, fromOffset
+                    );
 
                 stream.Select(envelope =>
                 {

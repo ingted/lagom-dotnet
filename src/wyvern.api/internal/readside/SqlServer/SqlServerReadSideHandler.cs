@@ -8,6 +8,7 @@ using Akka.Persistence.Query;
 using Akka.Streams.Dsl;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
 
 namespace wyvern.api.@internal.readside.SqlServer
@@ -17,13 +18,16 @@ namespace wyvern.api.@internal.readside.SqlServer
     public class SqlServerReadSideHandler<TE> : ReadSideHandler<TE>
         where TE : AggregateEvent<TE>
     {
-        private static Func<string, Func<SqlConnection>> ReadSideConnectionFactoryInitializer { get; } = (constr) => () => new SqlConnection(constr);
+        private static Func<string, Func<SqlConnection>> ReadSideConnectionFactoryInitializer { get; }
+            = (constr)
+            => ()
+            => new SqlConnection(constr);
 
         protected Func<SqlConnection> ReadSideConnectionFactory { get; }
         public string ReadSideId { get; }
         public Action<SqlConnection> GlobalPrepareCallback { get; }
         public Action<SqlConnection, AggregateEventTag> PrepareCallback { get; }
-        public Dictionary<Type, Action<SqlConnection, TE, Offset>> EventHandlers { get; }
+        public Dictionary<Type, Action<SqlConnection, EventStreamElement<TE>>> EventHandlers { get; }
 
         public SqlServerReadSideHandler(
             IConfiguration config,
@@ -31,7 +35,7 @@ namespace wyvern.api.@internal.readside.SqlServer
             string readSideId,
             Action<SqlConnection> globalPrepareCallback,
             Action<SqlConnection, AggregateEventTag> prepareCallback,
-            Dictionary<Type, Action<SqlConnection, TE, Offset>> eventHandlers
+            Dictionary<Type, Action<SqlConnection, EventStreamElement<TE>>> eventHandlers
         )
         {
             ReadSideId = readSideId;
@@ -80,14 +84,12 @@ namespace wyvern.api.@internal.readside.SqlServer
             }
         }
 
-        public virtual void DbActionExecutor((TE, Offset) pair, Action<SqlConnection, TE, Offset> action)
+        public virtual void DbActionExecutor(EventStreamElement<TE> element, Action<SqlConnection, EventStreamElement<TE>> action)
         {
             try
             {
                 using (var con = ReadSideConnectionFactory.Invoke())
-                {
-                    action(con, pair.Item1, pair.Item2);
-                }
+                    action(con, element);
             }
             catch (Exception ex)
             {
@@ -95,15 +97,15 @@ namespace wyvern.api.@internal.readside.SqlServer
             }
         }
 
-        public override Flow<KeyValuePair<TE, Offset>, Done, NotUsed> Handle()
+        public override Flow<EventStreamElement<TE>, Done, NotUsed> Handle()
         {
             return Flow.FromFunction(
-                new Func<KeyValuePair<TE, Offset>, Done>(
-                    pair =>
+                new Func<EventStreamElement<TE>, Done>(
+                    element =>
                     {
-                        if (EventHandlers.TryGetValue(pair.Key.GetType(), out var dbAction))
+                        if (EventHandlers.TryGetValue(element.Event.GetType(), out var dbAction))
                         {
-                            DbActionExecutor((pair.Key, pair.Value), dbAction);
+                            DbActionExecutor(element, dbAction);
                         }
                         else
                         {
@@ -119,9 +121,9 @@ namespace wyvern.api.@internal.readside.SqlServer
                                 and tag = @tag",
                                 new
                                 {
-                                    offset = (pair.Value as Sequence).Value,
+                                    offset = (element.Offset as Sequence).Value,
                                     readSideId = ReadSideId,
-                                    tag = (pair.Key.AggregateTag as AggregateEventTag).Tag
+                                    tag = ((element.Event as AggregateEvent<TE>).AggregateTag as AggregateEventTag).Tag
                                 });
                         }
 

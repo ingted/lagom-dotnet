@@ -206,7 +206,6 @@ namespace wyvern.api.@internal.sharding
         {
             return ActorSystem.Terminate();
         }
-
         public Source<KeyValuePair<E, Offset>, NotUsed> EventStream<E>(AggregateEventTag aggregateTag, Offset fromOffset)
             where E : AggregateEvent<E>
         {
@@ -226,7 +225,8 @@ namespace wyvern.api.@internal.sharding
                 ));
         }
 
-        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> IShardedEntityRegistry2.EventStream(AggregateEventTag aggregateTag, Offset fromOffset)
+
+        Source<EventStreamElement<TE>, NotUsed> IShardedEntityRegistry2.EventStream<TE>(AggregateEventTag aggregateTag, Offset fromOffset)
         {
             if (!EventsByTagQuery.HasValue)
                 throw new InvalidOperationException("No support for streaming events by tag");
@@ -238,19 +238,16 @@ namespace wyvern.api.@internal.sharding
             var startingOffset = MapStartingOffset(fromOffset);
 
             return queries.EventsByTag(tag, startingOffset)
-                .Select(env => KeyValuePair.Create(
-                    env,
-                    env.Offset
-                ));
+                .Select(envelope => (EventStreamElement<TE>)envelope); ;
         }
 
         public Source<KeyValuePair<E, Offset>, NotUsed> EventStream<E>(
-            AggregateEventTag aggregateTag,
-            string persistenceId,
-            Offset fromOffset = null,
-            Offset toOffset = null
-        )
-            where E : AggregateEvent<E>
+           AggregateEventTag aggregateTag,
+           string persistenceId,
+           Offset fromOffset = null,
+           Offset toOffset = null
+       )
+           where E : AggregateEvent<E>
         {
             if (!EventsByPersistenceIdQuery.HasValue)
                 throw new InvalidOperationException(
@@ -272,7 +269,7 @@ namespace wyvern.api.@internal.sharding
                 .Select(env => KeyValuePair.Create(env.Event as E, env.Offset));
         }
 
-        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> IShardedEntityRegistry2.EventStream(AggregateEventTag aggregateTag, string persistenceId, Offset fromOffset, Offset toOffset)
+        Source<EventStreamElement<TE>, NotUsed> IShardedEntityRegistry2.EventStream<TE>(AggregateEventTag aggregateTag, string persistenceId, Offset fromOffset, Offset toOffset)
         {
             if (!EventsByPersistenceIdQuery.HasValue)
                 throw new InvalidOperationException(
@@ -290,8 +287,7 @@ namespace wyvern.api.@internal.sharding
                     toOffset == null ?
                         Int64.MaxValue :
                         ((Sequence)toOffset).Value
-                )
-                .Select(env => KeyValuePair.Create(env, env.Offset));
+            ).Select(envelope => (EventStreamElement<TE>)envelope);
         }
 
 

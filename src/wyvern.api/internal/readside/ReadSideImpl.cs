@@ -18,7 +18,7 @@ namespace wyvern.api.@internal.readside
     internal class ReadSideImpl : ReadSide
     {
         ReadSideConfig Config { get; }
-        IShardedEntityRegistry Registry { get; }
+        IShardedEntityRegistry2 Registry { get; }
         ActorSystem System { get; }
 
         protected Option<string> Name { get; }
@@ -26,7 +26,7 @@ namespace wyvern.api.@internal.readside
         public ReadSideImpl(ActorSystem system, ReadSideConfig config, IShardedEntityRegistry registry)
         {
             Config = config;
-            Registry = registry;
+            Registry = registry as IShardedEntityRegistry2;
             System = system;
         }
 

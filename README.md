@@ -54,7 +54,7 @@ example up and running.
 To be used for the example above.
 
 ```
-var ws = new WebSocket("ws://localhost:5000/ws/hello");
+var ws = new WebSocket("ws://localhost:5000/ws/hello?st=0");
 ws.onopen = function() {
   console.log("connection open");
 };
@@ -65,4 +65,5 @@ ws.onmessage = function (evt) {
 ws.onclose = function() {
   console.log("Connection closed");
 };
+ws.send("start");
 ```

@@ -18,11 +18,17 @@ using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 using wyvern.entity.state;
 using wyvern.utils;
+using static wyvern.api.@internal.sharding.ShardedEntityActor;
 
 namespace wyvern.api.@internal.sharding
 {
     internal static class ShardedEntityActor
     {
+        /// <summary>
+        /// Separator used in delimiting the components of the persistent entity id
+        /// </summary>
+        public const char Separator = '|';
+
         public class Stop
         {
             public static Stop Instance { get; } = new Stop();
@@ -42,11 +48,6 @@ namespace wyvern.api.@internal.sharding
         where TE : AbstractEvent
         where TS : AbstractState
     {
-        /// <summary>
-        /// Separator used in delimiting the components of the persistent entity id
-        /// </summary>
-        private const char Separator = '|';
-
         /// <summary>
         /// Number of events recorded on this entity
         /// </summary>

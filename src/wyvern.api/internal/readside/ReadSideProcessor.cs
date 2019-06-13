@@ -18,14 +18,4 @@ namespace wyvern.api.@internal.readside
         public string ReadSideName => GetType().Name;
         public abstract ReadSideHandler<TE> BuildHandler();
     }
-
-    public static class ReadSideProcessor
-    {
-        public abstract class ReadSideHandler<TE> where TE : AggregateEvent<TE>
-        {
-            public Task<Done> GlobalPrepare() => Task.FromResult(Done.Instance);
-            public Task<Offset> Prepare(AggregateEventTag tag) => Task.FromResult<Offset>(NoOffset.Instance);
-            public abstract Flow<IEventStreamElement<TE>, Done, NotUsed> Handle();
-        }
-    }
 }

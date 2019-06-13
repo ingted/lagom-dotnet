@@ -44,10 +44,10 @@ public class Startup
              * Optionally enable any reactive services options here.
              * Note, for any console apps you can simply use `None`
              */
-            ReactiveServicesOption.WithApi |
-            ReactiveServicesOption.WithSwagger //|
-                                               //ReactiveServicesOption.WithTopics |
-                                               //ReactiveServicesOption.WithVisualizer
+            ReactiveServicesOption.WithApi
+            | ReactiveServicesOption.WithSwagger
+        // | ReactiveServicesOption.WithTopics
+        // | ReactiveServicesOption.WithVisualizer
         );
 
     }

@@ -6,6 +6,7 @@ using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 using Akka.Streams.Util;
+using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
 using wyvern.utils;
 
@@ -16,7 +17,7 @@ namespace wyvern.api.@internal.readside
         public static Props Props<TE>(
             ReadSideConfig config,
             ClusterStartupTask globalPrepareTask,
-            Func<AggregateEventTag, Offset, Source<KeyValuePair<TE, Offset>, NotUsed>> eventStreamFactory,
+            Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> eventStreamFactory,
             Func<ReadSideProcessor<TE>> processor
         ) where TE : AggregateEvent<TE>
         {
@@ -47,7 +48,7 @@ namespace wyvern.api.@internal.readside
     {
         ReadSideConfig Config { get; }
         ClusterStartupTask GlobalPrepareTask { get; }
-        Func<AggregateEventTag, Offset, Source<KeyValuePair<TE, Offset>, NotUsed>> EventStreamFactory { get; }
+        Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> EventStreamFactory { get; }
         Func<ReadSideProcessor<TE>> Processor { get; }
 
         internal Option<IKillSwitch> Shutdown { get; set; } = Option<IKillSwitch>.None;
@@ -55,7 +56,7 @@ namespace wyvern.api.@internal.readside
         public ReadSideActor(
             ReadSideConfig config,
             ClusterStartupTask globalPrepareTask,
-            Func<AggregateEventTag, Offset, Source<KeyValuePair<TE, Offset>, NotUsed>> eventStreamFactory,
+            Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> eventStreamFactory,
             Func<ReadSideProcessor<TE>> processor)
         {
             Config = config;
@@ -94,7 +95,8 @@ namespace wyvern.api.@internal.readside
                                 {
                                     var eventStreamSource = EventStreamFactory(tag, offset);
                                     var userlandFlow = handler.Handle();
-                                    return eventStreamSource.Via(userlandFlow);
+                                    return eventStreamSource
+                                        .Via(userlandFlow);
                                 }
                             );
                     },
@@ -105,7 +107,8 @@ namespace wyvern.api.@internal.readside
 
 
 
-                (var killSwitch, var streamDone) = backoffSource.ViaMaterialized(KillSwitches.Single<Done>(), Keep.Right)
+                (var killSwitch, var streamDone) = backoffSource
+                    .ViaMaterialized(KillSwitches.Single<Done>(), Keep.Right)
                     .ToMaterialized(Sink.Ignore<Done>(), Keep.Both)
                     .Run(Context.Materializer());
 

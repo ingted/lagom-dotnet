@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Akka;
 using Akka.Persistence.Query;
 using Akka.Streams.Dsl;
+using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
 
 namespace wyvern.api.@internal.readside
@@ -20,7 +21,7 @@ namespace wyvern.api.@internal.readside
             return Task.FromResult(Offset.NoOffset());
         }
 
-        public virtual Flow<KeyValuePair<TE, Offset>, Done, NotUsed> Handle()
+        public virtual Flow<EventStreamElement<TE>, Done, NotUsed> Handle()
         {
             throw new NotImplementedException();
         }

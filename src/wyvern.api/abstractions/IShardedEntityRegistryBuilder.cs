@@ -14,11 +14,11 @@ namespace wyvern.api.abstractions
         IShardedEntityRegistryBuilder WithExtension<TExtension, TImplementation>()
             where TExtension : class, IExtension
             where TImplementation : IExtensionId;
-        
+
         IShardedEntityRegistryBuilder WithReadSide<TEvent, TProcessor>()
             where TEvent : AggregateEvent<TEvent>
             where TProcessor : ReadSideProcessor<TEvent>, new();
-        
+
         IShardedEntityRegistryBuilder WithShardedEntity<T, TCommand, TEvent, TState>(Func<T> entityFactory = null)
             where T : ShardedEntity<TCommand, TEvent, TState>
             where TCommand : AbstractCommand

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace wyvern.entity.@event.aggregate
 {
     public abstract class AggregateEvent<E> : AbstractEvent, IAggregateEvent

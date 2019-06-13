@@ -27,7 +27,22 @@ namespace wyvern.api.abstractions
         Task Terminate();
     }
 
-    public interface IShardedEntityRegistry : IShardedEntityRegistryBase
+    public interface IShardedEntityRegistry2 : IShardedEntityRegistryBase
+    {
+        Source<EventStreamElement<TE>, NotUsed> EventStream<TE>(
+            AggregateEventTag instance,
+            Offset fromOffset
+        ) where TE : AggregateEvent<TE>;
+
+        Source<EventStreamElement<TE>, NotUsed> EventStream<TE>(
+            AggregateEventTag aggregateTag,
+            string persistenceId,
+            Offset fromOffset = null,
+            Offset toOffset = null
+        ) where TE : AggregateEvent<TE>;
+    }
+
+    public interface IShardedEntityRegistry1 : IShardedEntityRegistryBase
     {
         Source<KeyValuePair<TE, Offset>, NotUsed> EventStream<TE>(
             AggregateEventTag instance,
@@ -42,18 +57,8 @@ namespace wyvern.api.abstractions
         ) where TE : AggregateEvent<TE>;
     }
 
-    public interface IShardedEntityRegistry2 : IShardedEntityRegistryBase
+    public interface IShardedEntityRegistry : IShardedEntityRegistry1, IShardedEntityRegistry2
     {
-        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> EventStream(
-            AggregateEventTag instance,
-            Offset fromOffset
-        );
 
-        Source<KeyValuePair<EventEnvelope, Offset>, NotUsed> EventStream(
-            AggregateEventTag aggregateTag,
-            string persistenceId,
-            Offset fromOffset = null,
-            Offset toOffset = null
-        );
     }
 }

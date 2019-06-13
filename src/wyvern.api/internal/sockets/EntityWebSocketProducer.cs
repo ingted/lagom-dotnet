@@ -7,18 +7,19 @@ using Akka;
 using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
+using wyvern.api.abstractions;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 
 public class EntityWebSocketProducer<TE>
-    where TE : AbstractEvent
+    where TE : AggregateEvent<TE>
 {
     WebSocket WebSocket { get; }
-    Func<AggregateEventTag, string, Offset, Offset, Source<KeyValuePair<TE, Offset>, NotUsed>> StreamSource { get; }
+    Func<AggregateEventTag, string, Offset, Offset, Source<EventStreamElement<TE>, NotUsed>> StreamSource { get; }
 
     public EntityWebSocketProducer(
         WebSocket websocket,
-        Func<AggregateEventTag, string, Offset, Offset, Source<KeyValuePair<TE, Offset>, NotUsed>> streamSource
+        Func<AggregateEventTag, string, Offset, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
     )
     {
         WebSocket = websocket;
@@ -29,7 +30,7 @@ public class EntityWebSocketProducer<TE>
         string entityId,
         long startOffset,
         long endOffset,
-        Func<KeyValuePair<TE, Offset>, byte[]> func,
+        Func<EventStreamElement<TE>, byte[]> func,
         ActorMaterializer materializer)
     {
         var buffer = new byte[1024 * 4];

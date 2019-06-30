@@ -67,7 +67,7 @@ namespace wyvern.api.@internal.sharding
         public ShardedEntityActor(
             string idPrefix,
             Option<string> entityId,
-            T entity,
+            Func<T> entity,
             int snapshotAfter,
             TimeSpan passivateAfterIdleTimeout,
             string snapshotPluginId,
@@ -82,7 +82,7 @@ namespace wyvern.api.@internal.sharding
             if (EntityId.IndexOf(Separator) > -1)
                 throw new InvalidOperationException("Illegal use of separator character in entity name");
 
-            Entity = entity;
+            Entity = entity();
             Entity.EntityId = EntityId;
 
             SnapshotAfter = snapshotAfter;

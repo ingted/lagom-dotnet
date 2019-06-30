@@ -42,7 +42,7 @@ namespace wyvern.api.@internal.sharding
                 new ShardedEntityActor<T, TC, TE, TS>(
                     persistenceIdPrefix,
                     entityId,
-                    entityFactory(),
+                    () => entityFactory(),
                     snapshotAfter,
                     passivateAfterIdleTimeout,
                     snapshotPluginId,

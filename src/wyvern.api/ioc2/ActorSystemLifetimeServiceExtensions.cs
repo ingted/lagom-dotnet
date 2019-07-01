@@ -21,17 +21,10 @@ using wyvern.api.@internal.sharding;
 using wyvern.api.@internal.surfaces;
 using wyvern.api.ioc;
 using wyvern.utils;
+using static ReactiveServiceRouteBuilder;
 using static wyvern.api.ioc.ServiceExtensions;
 
-public static class InstanceFactory
-{
-    public static Func<TE> CreateInstance<T, TE>()
-    {
-        return new Func<TE>(() => (TE)Activator.CreateInstance(typeof(T), null));
-    }
-}
-
-public static class ReactviceServicesServiceExtensions
+public static class ReactivceServicesServiceExtensions
 {
 
     public static IApplicationBuilder ActivateServiceRegistry(this IApplicationBuilder app)
@@ -54,77 +47,97 @@ public static class ReactviceServicesServiceExtensions
         return app;
     }
 
+    // ! TODO: Streams
+    // public static IApplicationBuilder UseReactiveServicesStreams(this IApplicationBuilder app)
+    // {
+    //     // app.Use(async (context, next) =>
+    //     // {
+    //     // // TODO: this isn't matching with embedded path variables.
+    //     // if (context.Request.Path != path)
+    //     //     {
+    //     //         await next();
+    //     //     }
+    //     //     else
+    //     //     {
+    //     //         if (!context.WebSockets.IsWebSocketRequest)
+    //     //             return;
+
+    //     //         object[] mrefParamArray = mrefParams.Select(x =>
+    //     //             {
+    //     //                 var type = x.ParameterType;
+    //     //                 var name = x.Name;
+    //     //                 try
+    //     //                 {
+    //     //                     var data = context.Request.Query;
+    //     //                     var val = data[name].ToString();
+    //     //                     if (type == typeof(String))
+    //     //                         return val as object;
+    //     //                     if (type == typeof(Int64))
+    //     //                         return Int64.Parse(val) as object;
+    //     //                     if (type == typeof(Int32))
+    //     //                         return Int32.Parse(val) as object;
+    //     //                     if (type == typeof(Int16))
+    //     //                         return Int16.Parse(val) as object;
+
+    //     //                     throw new Exception("Unsupported path parameter type: " + type.Name);
+    //     //                 }
+    //     //                 catch (Exception)
+    //     //                 {
+    //     //                     throw new Exception($"Failed to match URL parameter [{name}] in path template.");
+    //     //                 }
+    //     //             })
+    //     //             .ToArray();
+
+    //     //         var socket = await context.WebSockets.AcceptWebSocketAsync();
+
+    //     //         var service = serviceFac();
+    //     //         var mres = mref.Invoke(service, mrefParamArray);
+    //     //         var cref = mres.GetType().GetMethod("Invoke");
+    //     //         var t = (Task)cref.Invoke(mres, new object[] { socket });
+    //     //         await t.ConfigureAwait(false);
+    //     //     }
+    //     // });
+    // }
+
     public static IApplicationBuilder UseReactiveServicesRouter(this IApplicationBuilder app)
     {
-        var localServiceTypes = ReactiveReflector.GetLocalServiceTypes();
-        Dictionary<Type, Service> serviceLookup = new Dictionary<Type, Service>();
-        foreach (var localServiceType in localServiceTypes)
-            serviceLookup.Add(localServiceType, (Service)app.ApplicationServices.GetService(localServiceType));
-
         var apiContractResolver = app.ApplicationServices.GetService<IContractResolver>();
         var serializerSettings = new JsonSerializerSettings
         {
             ContractResolver = apiContractResolver ?? new CamelCasePropertyNamesContractResolver(),
             Formatting = Formatting.Indented
         };
+
+        var localServiceTypes = ReactiveReflector.GetLocalServiceTypes();
+        Dictionary<Type, Service> serviceLookup = new Dictionary<Type, Service>();
+        foreach (var localServiceType in localServiceTypes)
+            serviceLookup.Add(localServiceType, (Service)app.ApplicationServices.GetService(localServiceType));
+
         var appRouter = new RouteBuilder(app);
 
         foreach (var service in serviceLookup)
         {
             var type = service.Key;
-            // TODO: Services are null
-            var descriptor = service.Value.Descriptor;
-            var calls = service.Value.Descriptor.Calls;
-            foreach (var call in calls.Where(x => x.CallId as RestCallId != null))
+            foreach (var call in service.Value.Descriptor.Calls.Where(x => x.CallId as RestCallId != null))
             {
                 var callRouter = ReactiveServiceRouteBuilder.ExtractRoutePath(call);
-
-                var serviceRoute = call.MethodRef;
-                var serviceRouteMethod = call.MethodRef.Method;
-                var serviceRouteMethodParameters = serviceRouteMethod.GetParameters();
-                var serviceCallType = serviceRouteMethod.ReturnType;
-                var requestType = serviceCallType.GenericTypeArguments[0];
+                var routeParams = ServiceCallRouteParameters.Parse(call);
 
                 callRouter.Map(appRouter)
                     .Invoke(
                         callRouter.PathPattern,
                         async (req, res, data) =>
                         {
-                            object[] mrefParamArray = serviceRouteMethodParameters.Select(x =>
-                            {
-                                var parameterType = x.ParameterType;
-                                var name = x.Name;
-                                try
-                                {
-                                    var val = data.Values[name].ToString();
-                                    if (parameterType == typeof(String))
-                                        return val;
-                                    if (parameterType == typeof(Int64))
-                                        return Int64.Parse(val) as object;
-                                    if (parameterType == typeof(Int32))
-                                        return Int32.Parse(val) as object;
-                                    if (parameterType == typeof(Int16))
-                                        return Int16.Parse(val) as object;
+                            object[] mrefParamArray = routeParams.CreateParameterArray(data);
 
-                                    throw new Exception("Unsupported path parameter type: " + parameterType.Name);
-                                }
-                                catch (Exception)
-                                {
-                                    throw new Exception($"Failed to match URL parameter [{name}] in path template.");
-                                }
-                            })
-                            .ToArray();
-
-                            var serverServiceCall = serviceRoute.DynamicInvoke(mrefParamArray);
+                            var serverServiceCall = routeParams.ServiceRoute.DynamicInvoke(mrefParamArray);
                             var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
-
                             var filter = new Func<RequestHeader, RequestHeader>(header =>
                             {
                                 foreach (var (k, v) in req.Headers)
                                     header = header.WithHeader(k, v);
-                                return descriptor.HeaderFilter.TransformServerRequest(header);
+                                return service.Value.Descriptor.HeaderFilter.TransformServerRequest(header);
                             });
-
                             var serviceCall = handleRequestHeader.Invoke(serverServiceCall, new object[] { filter });
                             var serviceCallInvoke = serverServiceCall.GetType().GetMethod("Invoke");
 
@@ -133,7 +146,7 @@ public static class ReactviceServicesServiceExtensions
                             // Better handling for the exceptions and exception mapping...
 
                             dynamic task;
-                            if (requestType == typeof(NotUsed))
+                            if (routeParams.RequestType == typeof(NotUsed))
                             {
                                 task = serviceCallInvoke.Invoke(serviceCall, new object[] { NotUsed.Instance });
                             }
@@ -143,7 +156,7 @@ public static class ReactviceServicesServiceExtensions
                                 using (var reader = new StreamReader(req.Body, Encoding.UTF8, true, 1024, true))
                                     body = reader.ReadToEnd();
 
-                                var obj = JsonConvert.DeserializeObject(body, requestType, serializerSettings);
+                                var obj = JsonConvert.DeserializeObject(body, routeParams.RequestType, serializerSettings);
                                 task = serviceCallInvoke.Invoke(serviceCall, new object[] { obj });
                             }
 

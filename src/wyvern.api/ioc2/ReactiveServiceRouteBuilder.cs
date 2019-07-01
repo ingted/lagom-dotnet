@@ -1,25 +1,12 @@
 using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Routing;
 using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
 
-public static class ReactiveServiceRouteBuilder
+public static partial class ReactiveServiceRouteBuilder
 {
-    public class ServiceCallRouter
-    {
-        public string PathPattern { get; }
-        public Func<IRouteBuilder, Func<string, Func<HttpRequest, HttpResponse, RouteData, Task>, IRouteBuilder>> Map { get; }
-
-        public ServiceCallRouter(string pathPattern, Func<IRouteBuilder, Func<string, Func<HttpRequest, HttpResponse, RouteData, Task>, IRouteBuilder>> map = null)
-        {
-            PathPattern = pathPattern;
-            Map = map;
-        }
-    }
-
     public static ServiceCallRouter ExtractRoutePath(ICall call)
     {
         switch (call.CallId)

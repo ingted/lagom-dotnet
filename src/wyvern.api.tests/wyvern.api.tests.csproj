@@ -32,6 +32,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="akka.conf" />
+    <Content Include="akka.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <Target Name="RemoveSnapshotsBeforeBuild" BeforeTargets="BeforeBuild">
     <RemoveDir Directories="$(OutDir)\Snapshots" />

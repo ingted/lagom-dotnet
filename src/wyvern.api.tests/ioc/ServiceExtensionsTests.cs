@@ -42,7 +42,7 @@ namespace wyvern.api.tests.ioc
             Assert.NotEmpty(str);
         }
 
-        [Theory(Skip = "TODO: iterate through registered routes to ensure all types are registered")]
+        [Fact(Skip = "TODO: iterate through registered routes to ensure all types are registered")]
         public async Task api_routes_registered()
         {
             await Task.CompletedTask;

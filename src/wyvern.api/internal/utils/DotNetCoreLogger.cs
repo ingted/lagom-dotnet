@@ -6,6 +6,13 @@ using Microsoft.Extensions.Logging;
 
 namespace wyvern.utils
 {
+    /// <summary>
+    /// Logger built to send akka logs to the ILogger implementation
+    /// </summary>
+    /// <remarks>
+    /// NOTE: This will be a bit noisy since dotnet will add its line prefix ahead of
+    /// akka's line prefix.
+    /// </remarks>
     public class DotNetCoreLogger : ReceiveActor, ILogReceive
     {
         ILogger<DotNetCoreLogger> Logger { get; }

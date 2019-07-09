@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using wyvern.api.@internal.readside;
 using static wyvern.api.@internal.readside.ClusterDistributionExtensionProvider;
 
+/// <summary>
+/// Instantiates an actor system within scope of a configuration laoder
+/// </summary>
 public class ActorSystemLifetime
 {
     IApplicationLifetime AppLifetime { get; }

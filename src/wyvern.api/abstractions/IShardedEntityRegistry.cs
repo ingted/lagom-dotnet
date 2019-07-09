@@ -24,6 +24,12 @@ namespace wyvern.api.abstractions
             where TE : AbstractEvent
             where TS : AbstractState;
 
+        void Register<T, TC, TE, TS>()
+            where T : ShardedEntity<TC, TE, TS>, new()
+            where TC : AbstractCommand
+            where TE : AbstractEvent
+            where TS : AbstractState;
+
         Task Terminate();
     }
 

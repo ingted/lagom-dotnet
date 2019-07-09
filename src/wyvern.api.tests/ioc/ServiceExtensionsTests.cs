@@ -1,22 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using AspNetCore.RouteAnalyzer;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.Routing.Internal;
 using Xunit;
-using Xunit.Sdk;
 
 namespace wyvern.api.tests.ioc
 {
     public class UserWithId
     {
         public string Id { get; set; }
-        public string Name { get; set;  }
+        public string Name { get; set; }
     }
 
     public class User
@@ -26,7 +18,7 @@ namespace wyvern.api.tests.ioc
 
     public class UserFriend
     {
-        public string Id { get; set;  }
+        public string Id { get; set; }
         public string Name { get; set; }
     }
 
@@ -48,6 +40,12 @@ namespace wyvern.api.tests.ioc
             response.EnsureSuccessStatusCode();
             var str = await response.Content.ReadAsStringAsync();
             Assert.NotEmpty(str);
+        }
+
+        [Theory(Skip = "TODO: iterate through registered routes to ensure all types are registered")]
+        public async Task api_routes_registered()
+        {
+            await Task.CompletedTask;
         }
 
         [Theory]

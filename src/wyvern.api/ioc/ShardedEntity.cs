@@ -14,6 +14,21 @@ using wyvern.entity.state;
 
 namespace wyvern.api.ioc
 {
+    public abstract class ShardedEntity
+    {
+        /// <summary>
+        /// Type name of current entity
+        /// </summary>
+        /// <returns></returns>
+        public string EntityTypeName => GetType().Name;
+
+        /// <summary>
+        /// Entity unique identifier
+        /// </summary>
+        /// <value></value>
+        public string EntityId { get; internal set; }
+    }
+
     /// <summary>
     /// Represents a sharded entity containing a the entity's behavior and
     /// given state
@@ -21,28 +36,35 @@ namespace wyvern.api.ioc
     /// <typeparam name="TC"></typeparam>
     /// <typeparam name="TE"></typeparam>
     /// <typeparam name="TS"></typeparam>
-    public abstract class ShardedEntity<TC, TE, TS>
+    public abstract class ShardedEntity<TC, TE, TS> : ShardedEntity
         where TC : AbstractCommand
         where TE : AbstractEvent
         where TS : AbstractState
     {
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <value></value>
+        public TC TypeTC { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <value></value>
+        public TE TypeTE { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <value></value>
+        public TS TypeTS { get; }
+
         /// <summary>
         /// Current Behavior instance
         /// </summary>
         /// <value></value>
         public Behavior BehaviorProperty { get; internal set; }
-
-        /// <summary>
-        /// Entity unique identifier
-        /// </summary>
-        /// <value></value>
-        public string EntityId { get; internal set; }
-
-        /// <summary>
-        /// Type name of current entity
-        /// </summary>
-        /// <returns></returns>
-        public string EntityTypeName => GetType().Name;
 
         /// <summary>
         /// Reference to state of current behaviour

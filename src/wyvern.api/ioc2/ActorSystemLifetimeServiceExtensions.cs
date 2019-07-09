@@ -26,23 +26,47 @@ using static wyvern.api.ioc.ServiceExtensions;
 
 public static class ReactivceServicesServiceExtensions
 {
-
     public static IApplicationBuilder ActivateServiceRegistry(this IApplicationBuilder app)
     {
         var registry = app.ApplicationServices.GetService<IShardedEntityRegistry>();
         var entities = ReactiveReflector.GetEntityTypes();
         foreach (var entity in entities)
         {
-            var registerMethod = typeof(ShardedEntityRegistry).GetMethod("Register");
+            // TODO: Need to automatically register the entities
+
             var types = entity.BaseType.GenericTypeArguments;
-            var generic = registerMethod.MakeGenericMethod(
-                entity, types[0], types[1], types[2]
-            );
-            var factory = typeof(InstanceFactory)
-                .GetMethod("CreateInstance")
-                .MakeGenericMethod(entity, entity)
-                .Invoke(null, null);
-            generic.Invoke(registry, new object[] { factory });
+            var facType = typeof(Func<>).MakeGenericType(entity);
+            var facInstance = app.ApplicationServices.GetService(facType);
+            if (facInstance != null)
+            {
+                var registerMethod = typeof(ShardedEntityRegistry)
+                    .GetMethods()
+                    .Where(x => x.Name == "Register")
+                    .First(x => x.GetParameters().Length > 0);
+                var generic = registerMethod.MakeGenericMethod(
+                    entity, types[0], types[1], types[2]
+                );
+                generic.Invoke(registry, new object[] { facInstance });
+            }
+            else
+            {
+                var instance = app.ApplicationServices.GetService(entity);
+                if (instance != null)
+                {
+                    // TODO: Auto-register
+                    // TODO: Support auto-registered entities
+                    // TODO: Create delegate, and pass the reference to the registry.
+                }
+                else
+                {
+                    var registerMethod = typeof(ShardedEntityRegistry)
+                    .GetMethod("Register", new Type[] { });
+                    var generic = registerMethod.MakeGenericMethod(
+                        entity, types[0], types[1], types[2]
+                    );
+                    generic.Invoke(registry, null);
+                }
+            }
         }
         return app;
     }
@@ -222,10 +246,10 @@ public static class ReactivceServicesServiceExtensions
             x => new CamelCasePropertyNamesContractResolver()
         );
         services.AddRouting();
-        services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ReactiveServicesApiDescriptionGroupProvider>();
+        services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ReactiveServicesSwaggerGroupProvider>();
         services.AddSwaggerGen(c =>
         {
-            c.DocumentFilter<ReactiveServicesApiDescriptionsDocumentFilter>();
+            c.DocumentFilter<ReactiveServicesSwaggerDocumentFilter>();
             c.SwaggerDoc("v1", new Info()
             {
                 Title = "My Reactive Services",

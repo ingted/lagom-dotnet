@@ -290,6 +290,15 @@ namespace wyvern.api.@internal.sharding
             ).Select(envelope => (EventStreamElement<TE>)envelope);
         }
 
+        public void Register<T, TC, TE, TS>()
+            where T : ShardedEntity<TC, TE, TS>, new()
+            where TC : AbstractCommand
+            where TE : AbstractEvent
+            where TS : AbstractState
+        {
+            this.Register<T, TC, TE, TS>(() => new T());
+        }
+
 
         public void Register<T, TC, TE, TS>(Func<T> entityFactory)
             where T : ShardedEntity<TC, TE, TS>

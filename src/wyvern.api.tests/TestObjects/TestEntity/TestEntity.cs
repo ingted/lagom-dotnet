@@ -26,6 +26,11 @@ namespace wyvern.api.tests
         private ActorSystem ActorSystem { get; }
         private Option<IActorRef> TestProbe { get; }
 
+        public TestEntity()
+        {
+
+        }
+
         public TestEntity(ActorSystem system, Option<IActorRef> probe = new Option<IActorRef>())
         {
             ActorSystem = system;

@@ -5,6 +5,15 @@ using wyvern.api.ioc;
 
 public class ReactiveReflector
 {
+    /// <summary>
+    /// Get all entity types registered within the current app domain
+    /// </summary>
+    /// <returns></returns>
+    /// <remarks>
+    /// ! WARN: this will pick up entities that are referenced by other service objects
+    /// * TODO: need to constrain the lookup of these objects to just the ones referenced
+    /// * by the loaded internal services
+    /// </remarks>
     public static Type[] GetEntityTypes()
     {
         var entityType = typeof(ShardedEntity);
@@ -16,6 +25,11 @@ public class ReactiveReflector
         return entities.ToArray();
     }
 
+    /// <summary>
+    /// Gets services implied to be remote by filtering out the
+    /// ones that have a local implementation
+    /// </summary>
+    /// <returns></returns>
     public static Type[] GetRemoteServiceTypes()
     {
         var localBaseTypes = GetLocalServiceTypes()
@@ -30,6 +44,11 @@ public class ReactiveReflector
 
     }
 
+    /// <summary>
+    /// Gets the service types implied to be local which have a local
+    /// internal implementation
+    /// </summary>
+    /// <returns></returns>
     public static Type[] GetLocalServiceTypes()
     {
         var serviceType = typeof(Service);

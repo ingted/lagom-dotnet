@@ -2,29 +2,32 @@
 using Akka.Actor;
 using wyvern.api.@internal.sharding;
 using Xunit;
+using System.Diagnostics;
+using wyvern.api.tests.ioc;
 
 namespace wyvern.api.tests.@internal.sharding
 {
-    public class ShardedEntityReferenceTests : IClassFixture<ActorSystemFixture>
+    public class ShardedEntityReferenceTests : IClassFixture<EntityRegistryFixture>
     {
-        private ActorSystemFixture ActorSystemFixture { get; }
+        private EntityRegistryFixture EntityRegistryFixture { get; }
+        private ShardedEntityRegistry Registry { get; }
 
-        public ShardedEntityReferenceTests(ActorSystemFixture actorSystemFixture)
+        public ShardedEntityReferenceTests(EntityRegistryFixture entityRegistryFixture)
         {
-            ActorSystemFixture = actorSystemFixture;
+            EntityRegistryFixture = entityRegistryFixture;
+            Registry = EntityRegistryFixture.Registry;
         }
 
         [Theory]
+        [InlineData("0000")]
         [InlineData("0001")]
+        [InlineData("0002")]
         public async Task Test(string id)
         {
-            var registry = new ShardedEntityRegistry(ActorSystemFixture.ActorSystem);
-            registry.Register<TestEntity, TestCommand, TestEvent, TestState>(() => new TestEntity(ActorSystemFixture.ActorSystem));
-            var entityRef = registry.RefFor<TestEntity>(id);
-
+            var entityRef = Registry.RefFor<TestEntity>(id);
             var reply = await entityRef.Ask(new TestCommand.Get());
-
             Assert.IsType<TestState>(reply);
         }
+
     }
 }

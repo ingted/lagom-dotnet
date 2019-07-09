@@ -8,12 +8,50 @@ public static partial class ReactiveServiceRouteBuilder
 {
     public class ServiceCallRouteParameters
     {
-        public static ServiceCallRouteParameters Parse(ICall call) => new ServiceCallRouteParameters(call);
+        /// <summary>
+        /// Static instantiation factory for ServiceCallRouteParameters a
+        /// given ICall implementation
+        /// </summary>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        public static ServiceCallRouteParameters Parse(ICall call)
+            => new ServiceCallRouteParameters(call);
 
+        /// <summary>
+        /// Service route delegate for invocation after pattern mapping
+        /// and type binding
+        /// </summary>
+        /// <value></value>
         public Delegate ServiceRoute { get; }
+
+        /// <summary>
+        /// Reference to method information for the targeted service route
+        /// </summary>
+        /// <value></value>
         public MethodInfo ServiceRouteMethod { get; }
+
+        /// <summary>
+        /// Parameters fo the service route which conform to the standard
+        /// dotnet route builder pattern matching syntax.
+        /// </summary>
+        /// <value></value>
         public ParameterInfo[] ServiceRouteMethodParameters { get; }
+
+        /// <summary>
+        /// Reference type for the service call signature including the
+        /// request and response type as generic arguments.
+        /// </summary>
+        /// <value></value>
         public Type ServiceCallType { get; }
+
+        /// <summary>
+        /// Request type.
+        ///
+        /// NOTE: If request method is GET, then the type will be `NotUsed`.
+        /// Otherwise, it will be the request body object for the given service
+        /// call mapping.
+        /// </summary>
+        /// <value></value>
         public Type RequestType { get; }
 
         ServiceCallRouteParameters(ICall call)
@@ -22,9 +60,15 @@ public static partial class ReactiveServiceRouteBuilder
             ServiceRouteMethod = call.MethodRef.Method;
             ServiceRouteMethodParameters = ServiceRouteMethod.GetParameters();
             ServiceCallType = ServiceRouteMethod.ReturnType;
-            RequestType = ServiceCallType.GenericTypeArguments[0];
+            RequestType = ServiceCallType.GenericTypeArguments.First();
         }
 
+        /// <summary>
+        /// Dynamically create a parameter array for the incoming request to the
+        /// target service call.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         internal object[] CreateParameterArray(RouteData data)
         {
             return ServiceRouteMethodParameters.Select(x =>

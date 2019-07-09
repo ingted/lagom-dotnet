@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.Event;
+using Akka.Monitoring;
+using Akka.Monitoring.StatsD;
 using Microsoft.AspNetCore.Hosting;
 using wyvern.api.@internal.readside;
 using static wyvern.api.@internal.readside.ClusterDistributionExtensionProvider;
@@ -38,6 +40,17 @@ public class ActorSystemLifetime
         var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
         var actorSystem = ActorSystem.Create(name, config);
         actorSystem.WithExtension<ClusterDistribution, ClusterDistributionExtensionProvider>();
+
+        // Add monitoring if configured
+        var host = config.GetString("statsd.host", null);
+        if (host != null)
+            ActorMonitoringExtension.RegisterMonitor(
+                actorSystem,
+                new ActorStatsDMonitor(
+                    host
+                )
+            );
+
         AppLifetime.ApplicationStopping.Register(() =>
         {
             if (actorSystem != null)

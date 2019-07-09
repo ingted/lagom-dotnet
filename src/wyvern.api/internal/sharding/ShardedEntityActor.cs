@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Dispatch.SysMsg;
+using Akka.Monitoring;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
 using Akka.Streams.Util;
@@ -54,6 +56,16 @@ namespace wyvern.api.@internal.sharding
         private long EventCount;
 
         private Func<SqlConnection> SqlConnectionFactory { get; }
+
+        protected override void PreStart()
+        {
+            Context.IncrementActorCreated();
+        }
+
+        protected override void PostStop()
+        {
+            Context.IncrementActorStopped();
+        }
 
         /// <summary>
         /// Public constructor (to be used only via Props)
@@ -278,6 +290,8 @@ namespace wyvern.api.@internal.sharding
         /// <returns></returns>
         protected override bool ReceiveCommand(object message)
         {
+            Context.IncrementMessagesReceived();
+
             var commandType = message.GetType();
 
             // Normal command handler
@@ -321,6 +335,7 @@ namespace wyvern.api.@internal.sharding
         /// <returns></returns>
         protected override bool ReceiveRecover(object message)
         {
+            Context.IncrementActorRestart();
             void InitEmpty()
             {
                 if (_init) return;

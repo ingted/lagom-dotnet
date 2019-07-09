@@ -38,7 +38,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <Target Name="RemoveSnapshotsBeforeBuild" BeforeTargets="BeforeBuild">
     <RemoveDir Directories="$(OutDir)\Snapshots" />
   </Target>

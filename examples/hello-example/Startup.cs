@@ -24,7 +24,8 @@ public class Startup
         services.AddShardedEntities(x =>
         {
             /* Register your entities here */
-            x.WithShardedEntity<HelloEntity, HelloCommand, HelloEvent, HelloState>();
+            x.WithShardedEntity<HelloEntity, HelloCommand, HelloEvent, HelloState>()
+                .WithReadSide<HelloEvent, HelloReadSideProcessor>();
         });
 
         services.AddReactiveServices(x =>

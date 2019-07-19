@@ -15,16 +15,17 @@ services:
       timeout: 10s
       retries: 5
 
-  amqp:
-    build:
-      context: ./docker/amqp
-      dockerfile: ./Dockerfile
-    ports:
-      - "5672:5672"
-      - "61616:61616"
-      - "8161:8161"
-    healthcheck:
-      test: curl -f http://amqp:8161 || false
+  # Not used currently, waiting on revision.
+  # amqp:
+  #   build:
+  #     context: ./docker/amqp
+  #     dockerfile: ./Dockerfile
+  #   ports:
+  #     - "5672:5672"
+  #     - "61616:61616"
+  #     - "8161:8161"
+  #   healthcheck:
+  #     test: curl -f http://amqp:8161 || false
 
   seed:
     build:
@@ -40,21 +41,3 @@ services:
     restart: always
     depends_on:
       - db
-      - amqp
-
-  node:
-    build:
-      context: .
-      dockerfile: ./docker/node/Dockerfile
-    ports:
-      - "5001:5000"
-      - "7001:7001"
-    environment:
-      ASPNETCORE_URLS: "http://*:5000"
-    healthcheck:
-      test: wget -q --spider -P /dev/null http://node:5000/api/hello/world
-    restart: always
-    depends_on:
-      - db
-      - amqp
-      - seed

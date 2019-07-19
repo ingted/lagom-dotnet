@@ -31,8 +31,7 @@ public abstract class HelloService : Service
                 RestCall(
                     Method.GET,
                     "/api/hello/{name}",
-                    (string name) =>
-                        SayHello(name)
+                    (string name) => SayHello(name)
                 ),
                 RestCall(
                     Method.GET,

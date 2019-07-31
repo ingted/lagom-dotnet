@@ -4,6 +4,15 @@ namespace wyvern.api.ioc
 {
     public static partial class ServiceExtensions
     {
+        public class ReactiveServicesOptions
+        {
+            public ReactiveServicesOption Options { get; }
+            public ReactiveServicesOptions(ReactiveServicesOption options)
+            {
+                Options = options;
+            }
+        }
+
         [Flags]
         public enum ReactiveServicesOption
         {

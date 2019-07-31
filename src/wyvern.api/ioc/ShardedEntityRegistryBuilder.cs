@@ -20,7 +20,7 @@ namespace wyvern.api.ioc
         private IConfiguration Config { get; }
         private Config Config2 { get; }
 
-        private List<Action<IShardedEntityRegistry>> RegistryDelegates { get; } = new List<Action<IShardedEntityRegistry>>();
+        private List<Action<IServiceProvider, IShardedEntityRegistry>> RegistryDelegates { get; } = new List<Action<IServiceProvider, IShardedEntityRegistry>>();
         private List<Action<ReadSide>> ReadSideDelegates { get; } = new List<Action<ReadSide>>();
         private List<Action<ActorSystem>> ExtensionDelegates { get; } = new List<Action<ActorSystem>>();
 
@@ -32,6 +32,44 @@ namespace wyvern.api.ioc
             ExtensionDelegates.Add(x => x.WithExtension<ClusterDistribution, ClusterDistributionExtensionProvider>());
         }
 
+        /// <summary>
+        /// Register with DI
+        /// </summary>
+        /// <param name="entityFactory"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="C"></typeparam>
+        /// <typeparam name="E"></typeparam>
+        /// <typeparam name="S"></typeparam>
+        /// <returns></returns>
+        public IShardedEntityRegistryBuilder WithShardedEntity<T, C, E, S>(Func<IServiceProvider, T> entityFactory = null)
+            where T : ShardedEntity<C, E, S>
+            where C : AbstractCommand
+            where E : AbstractEvent
+            where S : AbstractState
+        {
+            RegistryDelegates.Add(
+                (x, y) =>
+                    y.Register<T, C, E, S>(
+                        () =>
+                            {
+                                if (entityFactory == null)
+                                    return Activator.CreateInstance<T>();
+                                return entityFactory.Invoke(x);
+                            }
+                    )
+            );
+            return this;
+        }
+
+        /// <summary>
+        /// Register without DI
+        /// </summary>
+        /// <param name="entityFactory"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="C"></typeparam>
+        /// <typeparam name="E"></typeparam>
+        /// <typeparam name="S"></typeparam>
+        /// <returns></returns>
         public IShardedEntityRegistryBuilder WithShardedEntity<T, C, E, S>(Func<T> entityFactory = null)
             where T : ShardedEntity<C, E, S>
             where C : AbstractCommand
@@ -39,7 +77,15 @@ namespace wyvern.api.ioc
             where S : AbstractState
         {
             RegistryDelegates.Add(
-                y => y.Register<T, C, E, S>(entityFactory ?? Activator.CreateInstance<T>)
+                (x, y) =>
+                    y.Register<T, C, E, S>(
+                        () =>
+                            {
+                                if (entityFactory == null)
+                                    return Activator.CreateInstance<T>();
+                                return entityFactory.Invoke();
+                            }
+                    )
             );
             return this;
         }
@@ -49,7 +95,11 @@ namespace wyvern.api.ioc
             where TP : ReadSideProcessor<TE>, new()
         {
             ReadSideDelegates.Add(
-                x => x.Register(() => new TP { Config = Config, Config2 = Config2 })
+                x => x.Register(() => new TP
+                {
+                    Config = Config,
+                    Config2 = Config2
+                })
             );
             return this;
         }
@@ -64,14 +114,14 @@ namespace wyvern.api.ioc
             return this;
         }
 
-        public IShardedEntityRegistry Build()
+        public IShardedEntityRegistry Build(IServiceProvider services)
         {
             foreach (var extensionDelegate in ExtensionDelegates)
                 extensionDelegate(ActorSystem);
 
             var registry = new ShardedEntityRegistry(ActorSystem);
             foreach (var registryDelegate in RegistryDelegates)
-                registryDelegate.Invoke(registry);
+                registryDelegate.Invoke(services, registry);
 
             var readsideConfig = new ReadSideConfig(ActorSystem.Settings.Config);
             var readside = new ReadSideImpl(

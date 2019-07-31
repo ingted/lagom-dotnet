@@ -10,21 +10,22 @@ namespace wyvern.api
 {
     public static class ShardedEntitiesModule
     {
-        public static IServiceCollection AddShardedEntities(this IServiceCollection services,
+        public static IServiceCollection AddShardedEntities(this IServiceCollection serviceCollection,
             Action<IShardedEntityRegistryBuilder> builderDelegate)
         {
-            services.AddSingleton(x =>
+            serviceCollection.AddSingleton(services =>
             {
                 // TODO: this can just be registered and invoked on the other end...
-                var actorSystem = x.GetService<ActorSystem>();
+                var actorSystem = services.GetService<ActorSystem>();
                 // TODO: Clean up config so it's directed.
-                var builder = new ShardedEntityRegistryBuilder(actorSystem, x.GetService<IConfiguration>(), x.GetService<Config>());
+                var builder = new ShardedEntityRegistryBuilder(actorSystem, services.GetService<IConfiguration>(), services.GetService<Config>());
 
                 builderDelegate.Invoke(builder);
 
-                return builder.Build();
+                return builder.Build(services);
             });
-            return services;
+
+            return serviceCollection;
         }
     }
 }

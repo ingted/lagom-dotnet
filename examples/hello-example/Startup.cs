@@ -56,7 +56,6 @@ public class Startup
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-        //app.UseMiddleware<HttpStatusCodeExceptionMiddleware>();
         app.UseReactiveServices();
     }
 }

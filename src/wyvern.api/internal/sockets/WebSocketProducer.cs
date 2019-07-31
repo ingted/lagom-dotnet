@@ -83,7 +83,7 @@ public class WebSocketProducer<TE>
                         true,
                         CancellationToken.None
                     );
-            });
+            }).Wait();
         }, materializer);
 
         while (!result.CloseStatus.HasValue)

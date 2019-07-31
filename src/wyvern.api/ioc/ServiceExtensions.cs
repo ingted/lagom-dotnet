@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,9 +36,6 @@ namespace wyvern.api.ioc
             void Consume(RouteCollection collection);
         }
 
-        [Obsolete("WARNING: need to remove this for unit tests to work properly")]
-        static ReactiveServicesOption Options;
-
         /// <summary>
         /// Add the main reactive services components, including swagger generation
         /// </summary>
@@ -47,7 +45,7 @@ namespace wyvern.api.ioc
         public static IServiceCollection AddReactiveServices(this IServiceCollection services,
             Action<IReactiveServicesBuilder> builderDelegate, ReactiveServicesOption options)
         {
-            Options = options;
+            services.AddSingleton(new ReactiveServicesOptions(options));
 
             // Add reactive services core
             var builder = new ReactiveServicesBuilder();
@@ -55,13 +53,13 @@ namespace wyvern.api.ioc
             services.AddSingleton(builder.Build(services));
 
             // Optionally, expose reactive services via API
-            if (Options.HasFlag(ReactiveServicesOption.WithApi))
+            if (options.HasFlag(ReactiveServicesOption.WithApi))
             {
                 // Routing for mapping HTTP URLs in Kestrel
                 services.AddRouting();
 
                 // Swagger generation
-                if (Options.HasFlag(ReactiveServicesOption.WithSwagger))
+                if (options.HasFlag(ReactiveServicesOption.WithSwagger))
                 {
                     services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, ReactiveServicesApiDescriptionGroupProvider>();
                     services.AddSwaggerGen(c =>
@@ -81,61 +79,66 @@ namespace wyvern.api.ioc
 
         public static IApplicationBuilder UseReactiveServices(this IApplicationBuilder app)
         {
+
             var services = app.ApplicationServices;
+            var options = services.GetService<ReactiveServicesOptions>().Options;
             var reactiveServices = services.GetService<IReactiveServices>();
             var apiContractResolver = services.GetService<IContractResolver>();
 
-            void ServiceIterator(Action<Service, Type> x)
+            Dictionary<Type, (Service, Func<Service>)> serviceLookup = new Dictionary<Type, (Service, Func<Service>)>();
+            foreach (var reactiveService in reactiveServices.Select(x => x.Item1))
             {
-                foreach (var (serviceType, _) in reactiveServices)
-                    x((Service)services.GetService(serviceType), serviceType);
+                Func<Service> fac = () => (Service)services.GetService(reactiveService);
+                serviceLookup.Add(reactiveService, (fac(), fac));
             }
 
             // Register any service bound topics
-            if (Options.HasFlag(ReactiveServicesOption.WithTopics))
+            if (options.HasFlag(ReactiveServicesOption.WithTopics))
             {
-                ServiceIterator((service, serviceType) =>
+                foreach (var serviceReference in serviceLookup)
                 {
+                    var service = serviceReference.Value.Item1;
                     foreach (var topic in service.Descriptor.Topics)
                         RegisterTopic(
                             topic,
-                            service,
+                            serviceReference.Value.Item2(),
                             services.GetService<ISerializer>(),
                             services.GetService<IMessagePropertyExtractor>(),
                             app.ApplicationServices.GetService<ActorSystem>()
                         );
-                });
+                }
             }
 
             app.UseWebSockets();
 
             // Build the API components
-            if (Options.HasFlag(ReactiveServicesOption.WithApi))
+            if (options.HasFlag(ReactiveServicesOption.WithApi))
             {
                 var router = new RouteBuilder(app);
 
                 // Register all calls for the services
-                ServiceIterator((service, serviceType) =>
+                foreach (var serviceReference in serviceLookup)
                 {
+                    var service = serviceReference.Value.Item1;
                     foreach (var call in service.Descriptor.Calls)
                     {
                         switch (call.CallId)
                         {
                             case RestCallId _:
-                                RegisterCall(router, service, call, apiContractResolver);
+                                RegisterCall(router, serviceReference.Value.Item2, call, apiContractResolver);
                                 break;
                             case StreamCallId _:
-                                RegisterStream(router, service, serviceType, call, app);
+                                RegisterStream(router, serviceReference.Value.Item2, serviceReference.Key, call, app);
                                 break;
                             default:
                                 throw new Exception("Unknown call type");
                         }
 
                     }
-                });
+                }
 
                 // Visualization components
-                if (Options.HasFlag(ReactiveServicesOption.WithVisualizer))
+                if (options.HasFlag(ReactiveServicesOption.WithVisualizer))
                     AddVisualizer(router);
 
                 // Build the API
@@ -145,7 +148,7 @@ namespace wyvern.api.ioc
                 app.UseRouter(routes);
 
                 // Optionally, add swagger components
-                if (Options.HasFlag(ReactiveServicesOption.WithSwagger))
+                if (options.HasFlag(ReactiveServicesOption.WithSwagger))
                 {
                     var config = services.GetService<IConfiguration>();
                     var swaggerDocsApiName = config.GetValue<string>("SwaggerDocs:ApiName", "My API V1");
@@ -213,7 +216,7 @@ namespace wyvern.api.ioc
         /// <param name="service"></param>
         /// <param name="serviceType"></param>
         /// <param name="call"></param>
-        private static void RegisterCall(IRouteBuilder router, Service service, ICall call, IContractResolver apiContractResolver)
+        private static void RegisterCall(IRouteBuilder router, Func<Service> serviceFunc, ICall call, IContractResolver apiContractResolver)
         {
             var serializerSettings = new JsonSerializerSettings
             {
@@ -262,6 +265,7 @@ namespace wyvern.api.ioc
                     var serverServiceCall = route.DynamicInvoke(mrefParamArray);
                     var handleRequestHeader = serverServiceCall.GetType().GetMethod("HandleRequestHeader");
 
+                    var service = serviceFunc();
                     var filter = new Func<RequestHeader, RequestHeader>(header =>
                     {
                         foreach (var (k, v) in req.Headers)
@@ -328,7 +332,7 @@ namespace wyvern.api.ioc
         /// <param name="service"></param>
         /// <param name="serviceType"></param>
         /// <param name="call"></param>
-        private static void RegisterStream(IRouteBuilder router, Service service, Type serviceType, ICall call, IApplicationBuilder app)
+        private static void RegisterStream(IRouteBuilder router, Func<Service> serviceFac, Type serviceType, ICall call, IApplicationBuilder app)
         {
             var (_, path) = ExtractRoutePath(router, call);
 
@@ -376,6 +380,7 @@ namespace wyvern.api.ioc
 
                     var socket = await context.WebSockets.AcceptWebSocketAsync();
 
+                    var service = serviceFac();
                     var mres = mref.Invoke(service, mrefParamArray);
                     var cref = mres.GetType().GetMethod("Invoke");
                     var t = (Task)cref.Invoke(mres, new object[] { socket });

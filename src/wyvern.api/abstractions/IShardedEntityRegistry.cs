@@ -18,17 +18,7 @@ namespace wyvern.api.abstractions
             string entityId
         ) where T : class;
 
-        void Register<T, TC, TE, TS>(Func<T> entityFactory)
-            where T : ShardedEntity<TC, TE, TS>
-            where TC : AbstractCommand
-            where TE : AbstractEvent
-            where TS : AbstractState;
-
-        void Register<T, TC, TE, TS>()
-            where T : ShardedEntity<TC, TE, TS>, new()
-            where TC : AbstractCommand
-            where TE : AbstractEvent
-            where TS : AbstractState;
+        void Register<T>(Func<T> entityFactory = null);
 
         Task Terminate();
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
@@ -288,6 +289,33 @@ namespace wyvern.api.@internal.sharding
                         Int64.MaxValue :
                         ((Sequence)toOffset).Value
             ).Select(envelope => (EventStreamElement<TE>)envelope);
+        }
+
+        public void Register<T>(Func<T> entityFactory = null) {
+
+            var entity = typeof(T);
+            var types = entity.BaseType.GenericTypeArguments;
+            if (entityFactory != null)
+            {
+                var registerMethod = typeof(ShardedEntityRegistry)
+                    .GetMethods()
+                    .Where(x => x.Name == "Register")
+                    .First(x => x.GetParameters().Length > 0);
+                var generic = registerMethod.MakeGenericMethod(
+                    entity, types[0], types[1], types[2]
+                );
+                generic.Invoke(this, new object[] { entityFactory });
+            }
+            else
+            {
+                var registerMethod = typeof(ShardedEntityRegistry)
+                    .GetMethod("Register", new Type[] { });
+                var generic = registerMethod.MakeGenericMethod(
+                    entity, types[0], types[1], types[2]
+                );
+                generic.Invoke(this, null);
+            }
+
         }
 
         public void Register<T, TC, TE, TS>()

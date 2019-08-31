@@ -37,7 +37,6 @@ public class ReactiveServicesStartup
     /// <param name="env"></param>
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        app.ActivateServiceRegistry();
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         app.UseWebSockets();
         app.UseReactiveServicesRouter();

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Akka.Bootstrap.Docker;
 using Akka.Configuration;
 using wyvern.bootstrap.Docker;
@@ -11,7 +12,10 @@ public class ConfigurationLoader
     internal Config Load()
     {
         // Prepare config root
-        var configRoot = ConfigurationFactory.Empty;
+        var configRoot = ConfigurationFactory.FromResource(
+            "wyvern.api.reference.conf",
+            Assembly.GetAssembly(typeof(ConfigurationLoader))
+        );
 
         // Load Akka config values from environment variables first
         foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -37,9 +41,8 @@ public class ConfigurationLoader
                 configRoot,
                 (acc, cur) => acc.WithFallback(File.ReadAllText(cur.Item2))
             )
-            //.BootstrapFromDocker(false)
-            //.BootstrapRolesFromDocker()
-            ;
+            .BootstrapFromDocker(true)
+            .BootstrapRolesFromDocker();
 
         return config;
     }

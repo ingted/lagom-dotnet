@@ -6,12 +6,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="akka.conf" />
-    <Content Include="akka.conf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\src\wyvern.api\wyvern.api.csproj" />
     <ProjectReference Include="..\..\src\wyvern.entity\wyvern.entity.csproj" />
     <ProjectReference Include="..\..\src\wyvern.utils\wyvern.utils.csproj" />

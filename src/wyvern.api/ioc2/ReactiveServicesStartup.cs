@@ -17,6 +17,7 @@ public class ReactiveServicesStartup
     public void ConfigureServices(IServiceCollection services)
     {
         // TODO: This isn't as nice as I would like it to be, revisit soon...
+        services.AddSingleton<ConfigurationLoader>();
         services.AddSingleton<ActorSystemLifetime>();
         services.AddSingleton<ActorSystem>(x => {
             var actorSystem = x.GetService<ActorSystemLifetime>().CreateActorSystem();

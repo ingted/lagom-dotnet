@@ -17,6 +17,7 @@ public class ReactiveServicesStartup
     public void ConfigureServices(IServiceCollection services)
     {
         // TODO: This isn't as nice as I would like it to be, revisit soon...
+        services.AddCors();
         services.AddSingleton<ConfigurationLoader>();
         services.AddSingleton<ActorSystemLifetime>();
         services.AddSingleton<ActorSystem>(x => {
@@ -32,7 +33,6 @@ public class ReactiveServicesStartup
     /// <param name="env"></param>
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-        app.ApplicationServices.GetService<ActorSystemLifetime>();
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         app.UseWebSockets();
 

@@ -88,7 +88,7 @@ namespace wyvern.api.@internal.sharding
         {
             PersistenceIdPrefix = idPrefix;
             EntityId = entityId.OrElse(
-                Self.Path.Name
+                WebUtility.UrlDecode(Self.Path.Name)
             );
 
             if (EntityId.IndexOf(Separator) > -1)

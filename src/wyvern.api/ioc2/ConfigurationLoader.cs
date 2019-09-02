@@ -28,6 +28,7 @@ public class ConfigurationLoader
         }
 
         // Load Fallback sources (environment first, then base config)
+        var assemblyFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         var environment = Environment.GetEnvironmentVariable("AKKA_ENVIRONMENT");
         var config = (new[]
             {
@@ -35,11 +36,16 @@ public class ConfigurationLoader
                 (2, "akka.overrides.conf"), // First fallback
                 (3, $"akka.{environment}.conf") // First preference
             })
-            .Where(t => (File.Exists(t.Item2)))
-            .OrderByDescending(t => t.Item1)
+            .Select(x => (x.Item1, Path.Combine(assemblyFolder, x.Item2)))
+            .Where(x => File.Exists(x.Item2))
+            .OrderByDescending(x => x.Item1)
             .Aggregate(
                 configRoot,
-                (acc, cur) => acc.WithFallback(File.ReadAllText(cur.Item2))
+                (acc, cur) => acc.WithFallback(
+                    File.ReadAllText(
+                        cur.Item2
+                    )
+                )
             )
             .BootstrapFromDocker(false)
             .BootstrapRolesFromDocker();

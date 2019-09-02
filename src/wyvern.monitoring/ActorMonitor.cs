@@ -1,9 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Event;
-using Akka.Monitoring.Impl;
+using wyvern.monitoring.impl;
 using Akka.Util;
 
-namespace Akka.Monitoring
+namespace wyvern.monitoring
 {
     /// <summary>
     /// <see cref="ActorSystem"/> extension that enables the developer to utilize helpful default performance counters for actor systems

@@ -7,6 +7,6 @@
     <PackageReference Include="StatsdClient" Version="3.0.86"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Akka.Monitoring\Akka.Monitoring.csproj"/>
+    <ProjectReference Include="..\wyvern.monitoring\wyvern.monitoring.csproj"/>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 using System;
 
-namespace Akka.Monitoring.Impl
+namespace wyvern.monitoring.impl
 {
     /// <summary>
     /// Abstract base class for monitoring clients
@@ -11,7 +11,7 @@ namespace Akka.Monitoring.Impl
         public abstract void UpdateTiming(string metricName, long time, double sampleRate);
         public abstract void UpdateGauge(string metricName, int value, double sampleRate);
         public abstract int MonitoringClientId { get; }
-        
+
 
         public override int GetHashCode()
         {

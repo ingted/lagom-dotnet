@@ -14,8 +14,8 @@
     <ProjectReference Include="..\wyvern.visualize\wyvern.visualize.csproj" />
     <ProjectReference Include="..\wyvern.entity\wyvern.entity.csproj" />
     <ProjectReference Include="..\wyvern.utils\wyvern.utils.csproj" />
-    <ProjectReference Include="..\Akka.Monitoring.StatsD\Akka.Monitoring.StatsD.csproj" />
-    <ProjectReference Include="..\Akka.Monitoring\Akka.Monitoring.csproj" />
+    <ProjectReference Include="..\wyvern.monitoring.statsd\wyvern.monitoring.statsd.csproj" />
+    <ProjectReference Include="..\wyvern.monitoring\wyvern.monitoring.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="reference.conf" />

@@ -1,8 +1,9 @@
 ﻿using System;
+using Akka;
 using Akka.Actor;
 using Akka.Event;
 
-namespace Akka.Monitoring
+namespace wyvern.monitoring
 {
     /// <summary>
     /// Logging implementation used to report key events, such as <see cref="DeadLetter"/> and <see cref="UnhandledMessage"/> instances

@@ -8,7 +8,7 @@ using System.Reflection;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Dispatch.SysMsg;
-using Akka.Monitoring;
+using wyvern.monitoring;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
 using Akka.Streams.Util;

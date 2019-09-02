@@ -1,8 +1,8 @@
 ﻿using System;
-using Akka.Monitoring.Impl;
+using wyvern.monitoring.impl;
 using StatsdClient;
 
-namespace Akka.Monitoring.StatsD
+namespace wyvern.monitoring.statsd
 {
     /// <summary>
     /// StatsD (https://github.com/etsy/statsd) implementation of a <see cref="IActorMonitoringClient"/>.

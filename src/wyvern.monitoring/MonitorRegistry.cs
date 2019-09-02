@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Akka.Monitoring.Impl;
+using wyvern.monitoring.impl;
 using Akka.Util;
 
-namespace Akka.Monitoring
+namespace wyvern.monitoring
 {
     /// <summary>
     /// A thread-safe registry for tracking all of the monitor implementations used for any particular

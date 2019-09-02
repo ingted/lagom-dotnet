@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 
-namespace Akka.Monitoring.Impl
+namespace wyvern.monitoring.impl
 {
     /// <summary>
     /// A static list of names and naming schemes for built-in counters

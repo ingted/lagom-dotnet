@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
-using Akka.Monitoring.Impl;
+using wyvern.monitoring.impl;
 
-namespace Akka.Monitoring
+namespace wyvern.monitoring
 {
     /// <summary>
     /// Extension methods to make it easier to capture performance metrics inside Actors

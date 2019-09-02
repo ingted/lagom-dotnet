@@ -40,6 +40,7 @@ public class HelloServiceImpl : HelloService
         Logger = logger;
         ActorSystem = actorSystem;
         Serializer = serializer;
+        Registry.Register<HelloEntity>();
     }
 
     public override ServiceCall<NotUsed, string> SayHello(string name)

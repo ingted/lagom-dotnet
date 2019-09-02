@@ -41,7 +41,7 @@ public class ConfigurationLoader
                 configRoot,
                 (acc, cur) => acc.WithFallback(File.ReadAllText(cur.Item2))
             )
-            .BootstrapFromDocker(true)
+            .BootstrapFromDocker(false)
             .BootstrapRolesFromDocker();
 
         return config;

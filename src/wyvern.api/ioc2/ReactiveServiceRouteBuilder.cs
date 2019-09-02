@@ -7,7 +7,7 @@ using wyvern.api.@internal.surfaces;
 
 public static partial class ReactiveServiceRouteBuilder
 {
-    public static ServiceCallRouter ExtractRoutePath(ICall call)
+    public static ServiceCallRouter ExtractServiceCallRouter(ICall call)
     {
         switch (call.CallId)
         {

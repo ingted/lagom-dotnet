@@ -65,7 +65,7 @@ namespace wyvern.visualize.Interop
 
             Receive<ActorIdentity>(message =>
             {
-                if (message.MessageId == _correlationId && message.Subject != null)
+                if (message?.MessageId?.ToString() == _correlationId && message.Subject != null)
                 {
                     _collectedNodes.Add(ToNode(message.Subject));
                 }

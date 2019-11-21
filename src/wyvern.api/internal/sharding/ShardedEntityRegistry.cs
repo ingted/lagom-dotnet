@@ -12,7 +12,7 @@ using Akka.Persistence.Query.Sql;
 using Akka.Persistence.SqlServer;
 using Akka.Persistence.SqlServer.Journal;
 using Akka.Streams.Dsl;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.command;
 using wyvern.api.ioc;
@@ -76,7 +76,7 @@ namespace wyvern.api.@internal.sharding
                 switch (obj)
                 {
                     case CommandEnvelope commandEnvelope:
-                        return ($"{commandEnvelope.EntityId}", commandEnvelope.Payload).ToTuple();
+                        return ($"{commandEnvelope.EntityId}", commandEnvelope.Payload);
                     default:
                         throw new InvalidOperationException("Cannot derive entity identifier from unknown type");
                 }

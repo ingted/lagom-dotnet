@@ -1,8 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Util;
-using wyvern.visualize.Clients;
 using Microsoft.Extensions.DependencyInjection;
-using wyvern.visualize;
 
 namespace wyvern.visualize
 {

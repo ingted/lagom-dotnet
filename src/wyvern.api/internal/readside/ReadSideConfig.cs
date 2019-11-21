@@ -1,6 +1,6 @@
 using System;
 using Akka.Configuration;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.utils;
 
 namespace wyvern.api.@internal.readside
@@ -8,8 +8,8 @@ namespace wyvern.api.@internal.readside
     internal class ReadSideConfig
     {
         public TimeSpan GlobalPrepareTimeout { get; } = 20d.seconds();
-        public TimeSpan MaxBackoff { get; } = 3d.seconds();
-        public TimeSpan MinBackoff { get; } = 30d.seconds();
+        public TimeSpan MinBackoff { get; } = 3d.seconds();
+        public TimeSpan MaxBackoff { get; } = 30d.seconds();
         public TimeSpan OffsetTimeout { get; } = 5d.seconds();
         public double RandomBackoffFactor { get; } = 0.2d;
         public Option<string> Role { get; } = Option<string>.None;

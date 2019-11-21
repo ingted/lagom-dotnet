@@ -66,7 +66,7 @@ public class EntityWebSocketProducer<TE>
                     });
                 }, materializer);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }

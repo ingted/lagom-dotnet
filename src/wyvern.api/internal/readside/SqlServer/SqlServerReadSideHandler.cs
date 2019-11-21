@@ -91,7 +91,7 @@ namespace wyvern.api.@internal.readside.SqlServer
                 using (var con = ReadSideConnectionFactory.Invoke())
                     action(con, element);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

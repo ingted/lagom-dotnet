@@ -9,7 +9,7 @@ using Akka.Cluster;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Pattern;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.abstractions;
 using wyvern.utils;
 

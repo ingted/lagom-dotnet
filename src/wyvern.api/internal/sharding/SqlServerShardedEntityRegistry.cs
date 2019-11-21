@@ -1,6 +1,6 @@
 using Akka.Actor;
 using Akka.Persistence.Query.Sql;
-using Akka.Streams.Util;
+using Akka.Util;
 
 namespace wyvern.api.@internal.sharding
 {

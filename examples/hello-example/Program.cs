@@ -7,7 +7,7 @@ public class Program
     {
         CreateWebHostBuilder(args)
             .Build()
-            .Run();
+            .Start();
     }
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

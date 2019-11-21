@@ -5,9 +5,9 @@ using Akka.Configuration;
 using Akka.Event;
 using wyvern.monitoring;
 using wyvern.monitoring.statsd;
-using Microsoft.AspNetCore.Hosting;
 using wyvern.api.@internal.readside;
 using static wyvern.api.@internal.readside.ClusterDistributionExtensionProvider;
+using Microsoft.Extensions.Hosting;
 
 /// <summary>
 /// Instantiates an actor system within scope of a configuration laoder

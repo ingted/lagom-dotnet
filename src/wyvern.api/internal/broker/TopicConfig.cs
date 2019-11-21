@@ -1,6 +1,6 @@
 using System;
 using Akka.Configuration;
-using Akka.Streams.Util;
+using Akka.Util;
 
 internal static partial class Producer
 {

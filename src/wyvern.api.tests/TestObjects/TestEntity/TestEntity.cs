@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Akka.Actor;
 using Akka.Persistence;
-using Akka.Streams.Util;
+using Akka.Util;
 using Akka.TestKit;
 using wyvern.api.abstractions;
 using wyvern.api.ioc;

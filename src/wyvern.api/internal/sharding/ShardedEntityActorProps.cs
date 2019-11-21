@@ -1,6 +1,6 @@
 using System;
 using Akka.Actor;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.ioc;
 using wyvern.entity.command;
 using wyvern.entity.@event;

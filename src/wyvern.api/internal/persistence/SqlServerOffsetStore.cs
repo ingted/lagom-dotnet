@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Akka;
 using Akka.Configuration;
 using Akka.Persistence.Query;
-using Akka.Streams.Util;
+using Akka.Util;
 using Dapper;
 using wyvern.api.abstractions;
 

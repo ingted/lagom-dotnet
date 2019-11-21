@@ -37,7 +37,6 @@ namespace wyvern.bootstrap.Docker
             // Don't have access to Akka.NET ILoggingAdapter yet, since ActorSystem isn't started.
             Console.WriteLine($"[wyvern-Bootstrap] ROLES={clusterRoles}");
 
-
             if (!string.IsNullOrEmpty(clusterRoles))
             {
                 var seeds = clusterRoles.Split(",");

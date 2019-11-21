@@ -6,7 +6,7 @@ using Akka;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Event;
-using Akka.Streams.Util;
+using Akka.Util;
 using Akka.TestKit;
 using Akka.TestKit.Xunit;
 using Google.Protobuf.WellKnownTypes;

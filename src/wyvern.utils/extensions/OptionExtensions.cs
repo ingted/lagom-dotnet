@@ -1,5 +1,5 @@
 using System;
-using Akka.Streams.Util;
+using Akka.Util;
 
 namespace wyvern.utils
 {

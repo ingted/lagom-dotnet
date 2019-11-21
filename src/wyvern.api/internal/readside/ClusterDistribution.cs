@@ -3,7 +3,7 @@ using System.Net;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Cluster.Sharding;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.utils;
 
 // CHECKED
@@ -43,9 +43,11 @@ namespace wyvern.api.@internal.readside
                     switch (msg)
                     {
                         case EnsureActive ensureActive:
-                            return (ensureActive.EntityId, msg).ToTuple();
+                            return new Akka.Util.Option<(string, object)>(
+                                (ensureActive.EntityId, msg)
+                            );
                         default:
-                            return null;
+                            return Akka.Util.Option<(string, object)>.None;
                     }
                 };
                 ExtractShardId extractShardId = (msg) =>

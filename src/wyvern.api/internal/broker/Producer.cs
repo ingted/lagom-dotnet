@@ -12,7 +12,7 @@ using Akka.Pattern;
 using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
-using Akka.Streams.Util;
+using Akka.Util;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Sasl;
@@ -299,7 +299,7 @@ internal static partial class Producer
                         var zip = builder.Add(new Zip<Task<Done>, Offset>());
                         var offsetCommitter = builder.Add(
                             Flow.FromFunction(
-                                (Tuple<Task<Done>, Offset> x) =>
+                                ((Task<Done>, Offset) x) =>
                                 offsetDao.SaveOffset(x.Item2)
                             )
                         );

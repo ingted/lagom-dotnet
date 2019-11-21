@@ -5,7 +5,7 @@ using Akka.Actor;
 using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
 using wyvern.utils;

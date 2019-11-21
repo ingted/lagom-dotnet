@@ -1,5 +1,6 @@
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.ioc;
+using wyvern.utils;
 using static HelloCommand;
 using static HelloEvent;
 
@@ -26,7 +27,7 @@ public class HelloEntity : ShardedEntity<HelloCommand, HelloEvent, HelloState>
         // Provide an initial state to the entity, which in this case is just
         // a default `HelloState`.  But, it could be anything we choose - including
         // a state ingested from a remote or upstream system.
-        return NewBehaviorBuilder(new HelloState())
+        return NewBehaviorBuilder(state.OrElse(new HelloState()))
 
             // Handler for the `SayHelloCommand` which is read-only and does not
             // persist any events, nor does it change the `State`.

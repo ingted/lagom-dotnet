@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data.SqlClient;
 using Akka.Actor;
-using Akka.Streams.Util;
+using Akka.Util;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.behavior;
 using wyvern.api.@internal.command;

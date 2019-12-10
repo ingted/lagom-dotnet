@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace wyvern.api.ioc
+namespace wyvern.api.ioc2
 {
     /// <summary>
     /// Part of the swagger document generation pipeline which deals with description groups

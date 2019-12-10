@@ -9,7 +9,7 @@ using Akka;
 using Akka.Persistence.Query;
 using wyvern.api.abstractions;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.persistence
 {
     internal class SqlServerOffsetDao : IOffsetDao
     {

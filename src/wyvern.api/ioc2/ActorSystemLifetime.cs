@@ -9,65 +9,62 @@ using System.Collections.Generic;
 using Akka.Actor;
 using Akka.Configuration;
 using Akka.Event;
+using Microsoft.Extensions.Hosting;
+using wyvern.api.@internal.readside;
 using wyvern.monitoring;
 using wyvern.monitoring.statsd;
-using wyvern.api.@internal.readside;
 using static wyvern.api.@internal.readside.ClusterDistributionExtensionProvider;
-using Microsoft.Extensions.Hosting;
 
-/// <summary>
-/// Instantiates an actor system within scope of a configuration laoder
-/// </summary>
-public class ActorSystemLifetime
+namespace wyvern.api.ioc2
 {
-    IApplicationLifetime AppLifetime { get; }
-    ConfigurationLoader ConfigLoader { get; }
-
-    Dictionary<Type, Type> WithExtensions { get; } = new Dictionary<Type, Type>();
-
-    public ActorSystemLifetime(IApplicationLifetime appLifetime, ConfigurationLoader configLoader)
+    /// <summary>
+    /// Instantiates an actor system within scope of a configuration loader
+    /// </summary>
+    internal class ActorSystemLifetime
     {
-        AppLifetime = appLifetime;
-        ConfigLoader = configLoader;
-    }
+        private IApplicationLifetime AppLifetime { get; }
+        
+        private Config Config { get; }
 
-    public ActorSystemLifetime WithExtension<T, TI>()
-    {
-        WithExtensions.Add(typeof(T), typeof(TI));
-        return this;
-    }
-
-    public ActorSystem CreateActorSystem()
-    {
-        StandardOutLogger.InfoColor = ConsoleColor.Cyan;
-        StandardOutLogger.DebugColor = ConsoleColor.DarkGray;
-
-        var config = ConfigLoader.Load();
-        var name = config.GetString("wyvern.cluster-system-name", "ClusterSystem");
-        var actorSystem = ActorSystem.Create(name, config);
-        actorSystem.WithExtension<ClusterDistribution, ClusterDistributionExtensionProvider>();
-
-        // Add monitoring if configured
-        var host = config.GetString("statsd.host", null);
-        if (host != null)
-            ActorMonitoringExtension.RegisterMonitor(
-                actorSystem,
-                new ActorStatsDMonitor(
-                    host
-                )
-            );
-
-        AppLifetime.ApplicationStopping.Register(() =>
+        public ActorSystemLifetime(Config config, IApplicationLifetime appLifetime)
         {
-            if (actorSystem != null)
+            AppLifetime = appLifetime;
+            Config = config;
+        }
+        
+        public ActorSystem CreateActorSystem()
+        {
+            StandardOutLogger.InfoColor = ConsoleColor.Cyan;
+            StandardOutLogger.DebugColor = ConsoleColor.DarkGray;
+            
+            var name = Config.GetString("wyvern.cluster-system-name", "ClusterSystem");
+            var actorSystem = ActorSystem.Create(name, Config);
+            actorSystem.WithExtension<ClusterDistribution, ClusterDistributionExtensionProvider>();
+            
+            // TODO: Read things like serialization and journals to get plugins
+            
+            // Add monitoring if configured
+            var host = Config.GetString("statsd.host", null);
+            if (host != null)
+                ActorMonitoringExtension.RegisterMonitor(
+                    actorSystem,
+                    new ActorStatsDMonitor(
+                        host
+                    )
+                );
+
+            AppLifetime.ApplicationStopping.Register(() =>
             {
-                actorSystem.Log.Warning("Host terminating, starting coordinated shutdown on this node");
-                var shutdownTask = CoordinatedShutdown
+                if (actorSystem != null)
+                {
+                    actorSystem.Log.Warning("Host terminating, starting coordinated shutdown on this node");
+                    var shutdownTask = CoordinatedShutdown
                         .Get(actorSystem)
                         .Run(CoordinatedShutdown.ClrExitReason.Instance);
-                shutdownTask.Wait();
-            }
-        });
-        return actorSystem;
+                    shutdownTask.Wait();
+                }
+            });
+            return actorSystem;
+        }
     }
 }

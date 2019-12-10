@@ -129,7 +129,7 @@ namespace wyvern.api.@internal.readside.SqlServer
                                 {
                                     offset = (element.Offset as Sequence).Value,
                                     readSideId = ReadSideId,
-                                    tag = ((element.Event as AggregateEvent<TE>).AggregateTag as AggregateEventTag).Tag
+                                    tag = (element.Event.AggregateTag as AggregateEventTag).Tag
                                 });
                         }
 

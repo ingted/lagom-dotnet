@@ -4,12 +4,11 @@
 // ----------------------------------------------------------------------------
 
 
-using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using wyvern.api.abstractions;
 
-namespace wyvern.utils
+namespace wyvern.api.@internal.utils
 {
     /// <summary>
     /// Default serializer to be used in serializing the body of a topic message

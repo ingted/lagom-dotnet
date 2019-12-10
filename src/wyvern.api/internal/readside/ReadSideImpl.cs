@@ -15,9 +15,12 @@ using Akka.Cluster;
 using Akka.Cluster.Sharding;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Pattern;
+using Akka.Streams.Implementation.Fusing;
 using Akka.Util;
 using wyvern.api.abstractions;
-using wyvern.utils;
+using wyvern.api.ioc2;
+using wyvern.entity.@event.aggregate;
+using wyvern.utils.extensions;
 
 namespace wyvern.api.@internal.readside
 {
@@ -32,16 +35,16 @@ namespace wyvern.api.@internal.readside
         public ReadSideImpl(ActorSystem system, ReadSideConfig config, IShardedEntityRegistry registry)
         {
             Config = config;
-            Registry = registry as IShardedEntityRegistry2;
+            Registry = registry;
             System = system;
         }
 
-        public override void Register<TE>(Func<ReadSideProcessor<TE>> processorFactory)
+        public override void Register<T, TE>(Func<T> processorFactory = null) 
         {
             if (!Config.Role.ForAll(Cluster.Get(System).SelfRoles.Contains))
                 return;
 
-            ReadSideProcessor<TE> dummyProcessor;
+            T dummyProcessor;
             try
             {
                 dummyProcessor = processorFactory();

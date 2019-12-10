@@ -4,16 +4,11 @@
 // ----------------------------------------------------------------------------
 
 
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using wyvern.api.@internal.sharding;
-using wyvern.api.ioc;
+using wyvern.api.tests.persistence.Fixtures;
+using wyvern.api.tests.TestObjects.TestEntity;
 
-namespace wyvern.api.tests.ioc
+namespace wyvern.api.tests.ioc.Fixtures
 {
     public class EntityRegistryFixture : ActorSystemFixture
     {

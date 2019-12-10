@@ -7,25 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 using Akka;
 using Akka.Actor;
 using Akka.Persistence.Query;
-using Akka.Streams;
 using Akka.Streams.Dsl;
 using Amqp;
-using Amqp.Framing;
-using Amqp.Sasl;
-using Address = Amqp.Address;
+using wyvern.api.abstractions;
+using wyvern.api.@internal.persistence;
+using wyvern.api.@internal.surfaces;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
-using Newtonsoft.Json;
-using static Producer;
-using wyvern.api.abstractions;
-using static wyvern.api.@internal.surfaces.SqlServerOffsetStore;
+using static wyvern.api.@internal.broker.Producer;
+using static wyvern.api.@internal.persistence.SqlServerOffsetStore;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.broker
 {
     /// <summary>
     /// Topic producer

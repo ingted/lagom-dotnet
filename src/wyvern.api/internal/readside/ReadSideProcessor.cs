@@ -4,13 +4,8 @@
 // ----------------------------------------------------------------------------
 
 
-using System.Threading.Tasks;
-using Akka;
 using Akka.Configuration;
-using Akka.Persistence.Query;
-using Akka.Streams.Dsl;
 using Microsoft.Extensions.Configuration;
-using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
 
 namespace wyvern.api.@internal.readside

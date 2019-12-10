@@ -6,18 +6,22 @@
 
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using wyvern.api.ioc2;
 
-public class Program
+namespace wyvern.api.hello
 {
-    public static void Main(string[] args)
+    public static class Program
     {
-        CreateWebHostBuilder(args)
-            .Build()
-            .Run();
-    }
+        public static void Main(string[] args)
+        {
+            CreateWebHostBuilder(args)
+                .Build()
+                .Run();
+        }
 
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .UseStartup<ReactiveServicesStartup>();
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<ReactiveServicesStartup>();
+    }
 }
 

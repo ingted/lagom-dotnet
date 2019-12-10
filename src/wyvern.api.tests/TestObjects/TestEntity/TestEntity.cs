@@ -6,16 +6,13 @@
 
 using System;
 using System.Collections.Immutable;
-using System.Linq;
 using Akka.Actor;
-using Akka.Persistence;
 using Akka.Util;
-using Akka.TestKit;
 using wyvern.api.abstractions;
 using wyvern.api.ioc;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
-namespace wyvern.api.tests
+namespace wyvern.api.tests.TestObjects.TestEntity
 {
     public class TestEntity : ShardedEntity<TestCommand, TestEvent, TestState>
     {

@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using wyvern.api.abstractions;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.persistence
 {
     /// <summary>
     /// Offset Store for local development, not to be used in production

@@ -5,11 +5,10 @@
 
 
 using System.Threading.Tasks;
-using Akka.Actor;
 using wyvern.api.@internal.sharding;
 using Xunit;
-using System.Diagnostics;
-using wyvern.api.tests.ioc;
+using wyvern.api.tests.ioc.Fixtures;
+using wyvern.api.tests.TestObjects.TestEntity;
 
 namespace wyvern.api.tests.@internal.sharding
 {

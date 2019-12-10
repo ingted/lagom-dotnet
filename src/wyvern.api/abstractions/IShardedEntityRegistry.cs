@@ -10,11 +10,7 @@ using System.Threading.Tasks;
 using Akka;
 using Akka.Persistence.Query;
 using Akka.Streams.Dsl;
-using wyvern.api.ioc;
-using wyvern.entity.command;
-using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
-using wyvern.entity.state;
 
 namespace wyvern.api.abstractions
 {

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace wyvern.utils
+namespace wyvern.utils.extensions
 {
     /// <summary>
     /// Various Double extensions

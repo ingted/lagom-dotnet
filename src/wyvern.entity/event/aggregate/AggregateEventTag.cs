@@ -5,7 +5,7 @@
 
 
 using System;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 namespace wyvern.entity.@event.aggregate
 {

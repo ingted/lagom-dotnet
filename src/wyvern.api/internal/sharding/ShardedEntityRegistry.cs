@@ -16,7 +16,6 @@ using Akka.Cluster.Sharding;
 using Akka.Persistence.Query;
 using Akka.Persistence.Query.Sql;
 using Akka.Persistence.SqlServer;
-using Akka.Persistence.SqlServer.Journal;
 using Akka.Streams.Dsl;
 using Akka.Util;
 using wyvern.api.abstractions;
@@ -26,7 +25,7 @@ using wyvern.entity.command;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 using wyvern.entity.state;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 namespace wyvern.api.@internal.sharding
 {

@@ -5,11 +5,10 @@
 
 
 using System;
-using System.Linq;
 using System.Net;
 using Akka.Configuration;
 
-namespace wyvern.bootstrap.Docker
+namespace wyvern.utils
 {
     /// <summary>
     ///     Modifies our HOCON configuration based on environment variables

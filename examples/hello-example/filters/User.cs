@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-namespace wyvern.api
+namespace wyvern.api.hello.filters
 {
     public class User
     {

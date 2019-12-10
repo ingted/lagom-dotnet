@@ -4,12 +4,11 @@
 // ----------------------------------------------------------------------------
 
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using wyvern.entity.state;
 
-namespace wyvern.api.tests
+namespace wyvern.api.tests.TestObjects.TestEntity
 {
     public class TestState : AbstractState
     {

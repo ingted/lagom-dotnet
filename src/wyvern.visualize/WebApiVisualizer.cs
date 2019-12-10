@@ -5,7 +5,6 @@
 
 
 using System.Threading.Tasks;
-using wyvern.visualize;
 using wyvern.visualize.Clients;
 using wyvern.visualize.Models;
 

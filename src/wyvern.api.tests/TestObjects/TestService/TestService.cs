@@ -5,11 +5,11 @@
 
 
 using System;
-using System.Threading.Tasks;
 using Akka;
 using wyvern.api.abstractions;
+using wyvern.api.tests.ioc;
 
-namespace wyvern.api.tests.ioc
+namespace wyvern.api.tests.TestObjects.TestService
 {
     public abstract class TestService : Service
     {

@@ -13,18 +13,18 @@ using wyvern.utils;
 namespace wyvern.api.@internal.operations
 {
     /// <summary>
-    /// Aggregate event marker for persistance
+    /// Aggregate event marker for persistence
     /// </summary>
     /// <typeparam name="E"></typeparam>
     [Immutable]
-    internal sealed class PersistAll<E> : IPersist<E>
-        where E : AbstractEvent
+    internal sealed class PersistAll<TEvent> : IPersist<TEvent>
+        where TEvent : AbstractEvent
     {
         /// <summary>
         /// Events array
         /// </summary>
         /// <value></value>
-        internal ImmutableArray<E> Events { get; }
+        internal ImmutableArray<TEvent> Events { get; }
 
         /// <summary>
         /// After persist effect
@@ -38,7 +38,7 @@ namespace wyvern.api.@internal.operations
         /// <param name="events"></param>
         /// <param name="afterPersist"></param>
         /// <returns></returns>
-        public PersistAll(ImmutableArray<E> events, Action afterPersist) =>
+        public PersistAll(ImmutableArray<TEvent> events, Action afterPersist) =>
             (Events, AfterPersist) = (events, afterPersist);
 
     }

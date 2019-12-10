@@ -10,7 +10,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Cluster.Sharding;
 using Akka.Util;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 // CHECKED
 namespace wyvern.api.@internal.readside

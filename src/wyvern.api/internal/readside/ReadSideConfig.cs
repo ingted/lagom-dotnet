@@ -7,7 +7,7 @@
 using System;
 using Akka.Configuration;
 using Akka.Util;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 namespace wyvern.api.@internal.readside
 {
@@ -22,8 +22,11 @@ namespace wyvern.api.@internal.readside
 
         public ReadSideConfig(Config config)
         {
-            var configuration = config.GetConfig("wyvern.persistence.read-side")
-                .WithFallback(Config.Empty);
+            var configuration = config
+                .WithFallback(
+                    ConfigurationFactory.ParseString("wyvern.persistence.read-side {}")
+                ).GetConfig("wyvern.persistence.read-side");
+            // TODO: Load proper fallback...
             GlobalPrepareTimeout = configuration.GetTimeSpan("global-prepare-timeout", GlobalPrepareTimeout);
             MinBackoff = configuration.GetTimeSpan("failure-exponential-backoff.min", MinBackoff);
             MaxBackoff = configuration.GetTimeSpan("failure-exponential-backoff.max", MaxBackoff);

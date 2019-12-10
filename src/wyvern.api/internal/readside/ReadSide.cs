@@ -11,8 +11,8 @@ namespace wyvern.api.@internal.readside
 {
     public abstract class ReadSide
     {
-        public abstract void Register<TE>(
-            Func<ReadSideProcessor<TE>> processorFactory
-        ) where TE : AggregateEvent<TE>;
+        public abstract void Register<T, TE>(Func<T> processorFactory = null)
+            where T : ReadSideProcessor<TE>
+            where TE : AggregateEvent<TE>;
     }
 }

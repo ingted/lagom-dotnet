@@ -3,9 +3,7 @@
 // Copyright (C) 2016-2019 Lightbend Inc. <https://www.lightbend.com>
 // ----------------------------------------------------------------------------
 
-
 using System;
-using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,95 +12,97 @@ using Akka.Persistence.Query;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 using wyvern.api.abstractions;
-using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 
-public static class WebSocketProducer
+namespace wyvern.api.@internal.sockets
 {
-    public static EntityWebSocketProducer<TE> EntityStreamWithOffset<TE>(
-        WebSocket websocket,
-        Func<AggregateEventTag, string, Offset, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
-    )
-        where TE : AggregateEvent<TE>
+    public static class WebSocketProducer
     {
-        return new EntityWebSocketProducer<TE>(
-            websocket,
-            streamSource
-        );
-    }
-
-    public static WebSocketProducer<TE> StreamWithOffset<TE>(
-        WebSocket websocket,
-        Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
-    )
-        where TE : AggregateEvent<TE>
-    {
-        return new WebSocketProducer<TE>(
-            websocket,
-            streamSource
-        );
-    }
-}
-
-public class WebSocketProducer<TE>
-    where TE : AggregateEvent<TE>
-{
-    WebSocket WebSocket { get; }
-    Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> StreamSource { get; }
-
-    public WebSocketProducer(
-        WebSocket websocket,
-        Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
-    )
-    {
-        WebSocket = websocket;
-        StreamSource = streamSource;
-    }
-
-    public async Task Select(
-        long offset,
-        Func<EventStreamElement<TE>, byte[]> func,
-        ActorMaterializer materializer)
-    {
-        var buffer = new byte[1024 * 4];
-        var result = await WebSocket.ReceiveAsync(
-            new ArraySegment<byte>(buffer),
-            CancellationToken.None
-        );
-
-        await StreamSource.Invoke(
-            AggregateEventTag.Of<TE>(),
-            Offset.Sequence(offset)
+        public static EntityWebSocketProducer<TE> EntityStreamWithOffset<TE>(
+            WebSocket websocket,
+            Func<AggregateEventTag, string, Offset, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
         )
-        .RunForeach((envelope) =>
+            where TE : AggregateEvent<TE>
         {
-            var m = func(envelope);
-            Task.Run(async () =>
-            {
-                await WebSocket.SendAsync(
-                        new ArraySegment<byte>(
-                            m,
-                            0,
-                            m.Length
-                        ),
-                        WebSocketMessageType.Text,
-                        true,
-                        CancellationToken.None
-                    );
-            }).Wait();
-        }, materializer);
+            return new EntityWebSocketProducer<TE>(
+                websocket,
+                streamSource
+            );
+        }
 
-        while (!result.CloseStatus.HasValue)
+        public static WebSocketProducer<TE> StreamWithOffset<TE>(
+            WebSocket websocket,
+            Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
+        )
+            where TE : AggregateEvent<TE>
         {
-            result = await WebSocket.ReceiveAsync(
+            return new WebSocketProducer<TE>(
+                websocket,
+                streamSource
+            );
+        }
+    }
+
+    public class WebSocketProducer<TE>
+        where TE : AggregateEvent<TE>
+    {
+        WebSocket WebSocket { get; }
+        Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> StreamSource { get; }
+
+        public WebSocketProducer(
+            WebSocket websocket,
+            Func<AggregateEventTag, Offset, Source<EventStreamElement<TE>, NotUsed>> streamSource
+        )
+        {
+            WebSocket = websocket;
+            StreamSource = streamSource;
+        }
+
+        public async Task Select(
+            long offset,
+            Func<EventStreamElement<TE>, byte[]> func,
+            ActorMaterializer materializer)
+        {
+            var buffer = new byte[1024 * 4];
+            var result = await WebSocket.ReceiveAsync(
                 new ArraySegment<byte>(buffer),
                 CancellationToken.None
             );
+
+            await StreamSource.Invoke(
+                    AggregateEventTag.Of<TE>(),
+                    Offset.Sequence(offset)
+                )
+                .RunForeach((envelope) =>
+                {
+                    var m = func(envelope);
+                    Task.Run(async () =>
+                    {
+                        await WebSocket.SendAsync(
+                            new ArraySegment<byte>(
+                                m,
+                                0,
+                                m.Length
+                            ),
+                            WebSocketMessageType.Text,
+                            true,
+                            CancellationToken.None
+                        );
+                    }).Wait();
+                }, materializer);
+
+            while (!result.CloseStatus.HasValue)
+            {
+                result = await WebSocket.ReceiveAsync(
+                    new ArraySegment<byte>(buffer),
+                    CancellationToken.None
+                );
+            }
+            await WebSocket.CloseAsync(
+                result.CloseStatus.Value,
+                result.CloseStatusDescription,
+                CancellationToken.None
+            );
         }
-        await WebSocket.CloseAsync(
-            result.CloseStatus.Value,
-            result.CloseStatusDescription,
-            CancellationToken.None
-        );
     }
 }

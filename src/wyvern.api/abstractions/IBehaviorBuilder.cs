@@ -37,13 +37,7 @@ namespace wyvern.api.abstractions
         IBehaviorBuilder<TC, TE, TS> SetEventHandlerChangingBehavior<TE2, TS2>(
             Func<TE2, ShardedEntity<TC, TE, TS>.Behavior> func)
             where TE2 : TE;
-
-        [Obsolete("Instead of this command handler, generate initial state before building behavior")]
-        IBehaviorBuilder<TC, TE, TS> SetIngestionCommandHandler<TC2, TR2>(
-            Func<TC2, ShardedEntity<TC, TE, TS>.IIngestionCommandContext<TC>, IPersist<TE>> func)
-            where TC2 : IReplyType<TR2>, TC
-            where TR2 : class;
-
+        
         IBehaviorBuilder<TC, TE, TS> SetReadOnlyCommandHandler<TC2, TR2>(
             Action<TC2, IReadOnlyCommandContext> func)
             where TC2 : TC, IReplyType<TR2>

@@ -10,6 +10,7 @@ using System.Collections.Immutable;
 using Akka;
 using Akka.Persistence.Query;
 using Akka.Streams.Dsl;
+using wyvern.api.@internal.broker;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 

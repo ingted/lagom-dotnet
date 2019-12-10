@@ -7,7 +7,7 @@
 using System;
 using Akka.Actor;
 using wyvern.api.abstractions;
-using wyvern.api.exceptions;
+using wyvern.utils.exceptions;
 
 namespace wyvern.api.@internal.command
 {

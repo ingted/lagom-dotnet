@@ -5,22 +5,19 @@
 
 
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using Akka;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
 using Akka.Event;
-using Akka.Util;
-using Akka.TestKit;
 using Akka.TestKit.Xunit;
-using Google.Protobuf.WellKnownTypes;
+using Akka.Util;
 using wyvern.api.@internal.sharding;
-using wyvern.utils;
+using wyvern.api.tests.persistence.Fixtures;
+using wyvern.api.tests.TestObjects.TestEntity;
+using wyvern.utils.extensions;
 using Xunit;
 
-namespace wyvern.api.tests
+namespace wyvern.api.tests.persistence
 {
     public class PersistentEntityActorTests : TestKit, IClassFixture<ActorSystemFixture>
     {

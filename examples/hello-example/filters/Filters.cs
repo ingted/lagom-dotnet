@@ -5,12 +5,10 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using wyvern.api;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
-namespace wyvern.examples.filters
+namespace wyvern.api.hello.filters
 {
     public class Filters
     {

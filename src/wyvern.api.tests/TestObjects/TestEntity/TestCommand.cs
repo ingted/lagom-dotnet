@@ -4,11 +4,10 @@
 // ----------------------------------------------------------------------------
 
 
-using Akka;
 using wyvern.api.abstractions;
 using wyvern.entity.command;
 
-namespace wyvern.api.tests
+namespace wyvern.api.tests.TestObjects.TestEntity
 {
     public abstract class TestCommand : AbstractCommand
     {

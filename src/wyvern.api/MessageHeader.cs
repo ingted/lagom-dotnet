@@ -5,9 +5,13 @@
 
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
+using wyvern.utils;
 
 namespace wyvern.api
 {
+    [Immutable]
+    [ExcludeFromCodeCoverage]
     public class MessageHeader
     {
         public MessageProtocol Protocol { get; }

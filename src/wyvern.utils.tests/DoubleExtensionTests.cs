@@ -6,7 +6,7 @@
 
 using System;
 using Xunit;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 namespace wyvern.utils.tests
 {

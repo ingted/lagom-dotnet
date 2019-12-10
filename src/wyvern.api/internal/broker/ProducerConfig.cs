@@ -6,32 +6,35 @@
 
 using Akka.Configuration;
 
-internal static partial class Producer
+namespace wyvern.api.@internal.broker
 {
-    /// <summary>
-    /// Producer configuration
-    /// </summary>
-    public class ProducerConfig : ClientConfig
+    internal static partial class Producer
     {
         /// <summary>
-        /// Section path
+        /// Producer configuration
         /// </summary>
-        const string section = "wyvern.broker.servicebus.client.producer";
-
-        /// <summary>
-        /// Run on role
-        /// </summary>
-        /// <value></value>
-        public string Role { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="config"></param>
-        /// <returns></returns>
-        public ProducerConfig(Config config) : base(config, section)
+        public class ProducerConfig : ClientConfig
         {
-            Role = config.GetString("role", string.Empty);
+            /// <summary>
+            /// Section path
+            /// </summary>
+            const string section = "wyvern.broker.servicebus.client.producer";
+
+            /// <summary>
+            /// Run on role
+            /// </summary>
+            /// <value></value>
+            public string Role { get; }
+
+            /// <summary>
+            ///
+            /// </summary>
+            /// <param name="config"></param>
+            /// <returns></returns>
+            public ProducerConfig(Config config) : base(config, section)
+            {
+                Role = config.GetString("role", string.Empty);
+            }
         }
     }
 }

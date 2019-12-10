@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using wyvern.api.abstractions;
 
-namespace wyvern.utils
+namespace wyvern.api.@internal.utils
 {
     /// <summary>
     /// Extracts properties of a message into the given dictionary

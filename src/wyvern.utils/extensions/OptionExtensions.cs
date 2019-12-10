@@ -7,7 +7,7 @@
 using System;
 using Akka.Util;
 
-namespace wyvern.utils
+namespace wyvern.utils.extensions
 {
     /// <summary>
     /// Extensions for Akka.Streams.Util.Option

@@ -11,7 +11,6 @@ using Akka;
 using Akka.Actor;
 using Akka.Persistence.Query;
 using Akka.Streams.Dsl;
-using wyvern.api.@internal.surfaces;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 

@@ -8,7 +8,7 @@ using System;
 using System.Data.SqlClient;
 using Akka.Configuration;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.persistence
 {
     /// <summary>
     /// Provides a connection factory to the default database instance

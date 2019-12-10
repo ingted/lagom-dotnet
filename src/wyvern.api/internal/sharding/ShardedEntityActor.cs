@@ -13,7 +13,6 @@ using System.Net;
 using System.Reflection;
 using Akka.Actor;
 using Akka.Cluster.Sharding;
-using Akka.Dispatch.SysMsg;
 using wyvern.monitoring;
 using Akka.Persistence;
 using Akka.Persistence.Journal;
@@ -25,7 +24,7 @@ using wyvern.entity.command;
 using wyvern.entity.@event;
 using wyvern.entity.@event.aggregate;
 using wyvern.entity.state;
-using wyvern.utils;
+using wyvern.utils.extensions;
 using static wyvern.api.@internal.sharding.ShardedEntityActor;
 
 namespace wyvern.api.@internal.sharding
@@ -178,7 +177,7 @@ namespace wyvern.api.@internal.sharding
         private bool HandleCommand(Type commandType, object message)
         {
 
-            var commandContext = newContext(Sender, SqlConnectionFactory);
+            var commandContext = newContext(Sender);
 
             if (!CommandHandlers.TryGetValue(commandType, out var commandHandler))
             {
@@ -398,9 +397,9 @@ namespace wyvern.api.@internal.sharding
         /// </summary>
         /// <typeparam name="TC"></typeparam>
         /// <returns></returns>
-        private ShardedEntity<TC, TE, TS>.CommandContext<TC> newContext(IActorRef sender, Func<SqlConnection> sqlConnectionFactory)
+        private ShardedEntity<TC, TE, TS>.CommandContext<TC> newContext(IActorRef sender)
         {
-            return new ShardedEntity<TC, TE, TS>.IngestionCommandContext<TC>(sender, sqlConnectionFactory);
+            return new ShardedEntity<TC, TE, TS>.CommandContext<TC>(sender);
         }
 
         /// <summary>

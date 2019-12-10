@@ -10,7 +10,7 @@ using Akka;
 using Akka.Persistence.Query;
 using wyvern.api.abstractions;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.persistence
 {
     /// <summary>
     /// Offset DAO for local development, not to be used in production

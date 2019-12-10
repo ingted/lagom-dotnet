@@ -16,25 +16,25 @@ namespace wyvern.api.@internal.operations
     /// </summary>
     /// <typeparam name="E"></typeparam>
     [Immutable]
-    internal sealed class PersistOne<E> : IPersist<E>
-        where E : AbstractEvent
+    internal sealed class PersistOne<TEvent> : IPersist<TEvent>
+        where TEvent : AbstractEvent
     {
         /// <summary>
         /// Event
         /// </summary>
         /// <value></value>
-        public E Event { get; }
+        public TEvent Event { get; }
 
         /// <summary>
         /// Delegate event wrapper for post-action side effects
         /// </summary>
         /// <value></value>
-        public Action<E> AfterPersist { get; }
+        public Action<TEvent> AfterPersist { get; }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PersistOne(E @event, Action<E> afterPersist) =>
+        public PersistOne(TEvent @event, Action<TEvent> afterPersist) =>
             (Event, AfterPersist) = (@event, afterPersist);
 
     }

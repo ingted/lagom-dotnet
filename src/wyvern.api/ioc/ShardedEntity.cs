@@ -52,19 +52,19 @@ namespace wyvern.api.ioc
         ///
         /// </summary>
         /// <value></value>
-        public TC TypeTC { get; }
+        public Type TypeTC => typeof(TC);
 
         /// <summary>
         ///
         /// </summary>
         /// <value></value>
-        public TE TypeTE { get; }
+        public Type TypeTE => typeof(TE);
 
         /// <summary>
         ///
         /// </summary>
         /// <value></value>
-        public TS TypeTS { get; }
+        public Type TypeTS => typeof(TS);
 
         /// <summary>
         /// Current Behavior instance
@@ -194,24 +194,7 @@ namespace wyvern.api.ioc
         {
             SqlConnection SqlConnection();
         }
-
-        internal class IngestionCommandContext<T> : CommandContext<T>, IIngestionCommandContext<T>
-            where T : class
-        {
-            internal Func<SqlConnection> DbConnectionFactory { get; }
-
-            public IngestionCommandContext(IActorRef sender, Func<SqlConnection> dbConnectionFactory)
-                : base(sender)
-            {
-                DbConnectionFactory = dbConnectionFactory;
-            }
-
-            public SqlConnection SqlConnection()
-            {
-                return DbConnectionFactory.Invoke();
-            }
-        }
-
+        
         /// <summary>
         /// Command context
         /// </summary>
@@ -225,7 +208,7 @@ namespace wyvern.api.ioc
             /// </summary>
             /// <param name="sender">Sending actor</param>
             /// <returns></returns>
-            public CommandContext(IActorRef sender) : base(sender)
+            protected internal CommandContext(IActorRef sender) : base(sender)
             {
             }
 

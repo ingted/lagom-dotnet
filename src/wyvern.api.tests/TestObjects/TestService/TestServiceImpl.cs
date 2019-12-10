@@ -7,8 +7,9 @@
 using System;
 using System.Threading.Tasks;
 using Akka;
+using wyvern.api.tests.ioc;
 
-namespace wyvern.api.tests.ioc
+namespace wyvern.api.tests.TestObjects.TestService
 {
     public class TestServiceImpl : TestService
     {

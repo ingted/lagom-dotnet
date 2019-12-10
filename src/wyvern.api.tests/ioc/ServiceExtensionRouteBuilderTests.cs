@@ -6,6 +6,8 @@
 
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
+using wyvern.api.ioc2;
+using wyvern.api.tests.TestObjects;
 
 namespace wyvern.api.tests.ioc
 {

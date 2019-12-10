@@ -5,7 +5,6 @@
 
 
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Xunit;
@@ -14,6 +13,10 @@ namespace wyvern.api.tests
 {
     public class ApiSurfaceTests
     {
+        /// <summary>
+        /// The API assembly should be completely abstract and comprised of internals in
+        /// order to protect core functions from being instantiated incorrectly
+        /// </summary>
         [Fact]
         public void classes_in_api_namespace_cannot_be_instantiated()
         {

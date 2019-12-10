@@ -6,7 +6,7 @@
 
 using wyvern.entity.@event;
 
-namespace wyvern.api.tests
+namespace wyvern.api.tests.TestObjects.TestEntity
 {
     public abstract class TestEvent : AbstractEvent
     {

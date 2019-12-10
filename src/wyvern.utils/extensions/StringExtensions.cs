@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace wyvern.utils
+namespace wyvern.utils.extensions
 {
 
     /// <summary>

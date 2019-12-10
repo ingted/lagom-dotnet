@@ -39,8 +39,10 @@ namespace wyvern.api.@internal.behavior
         /// <param name="commandHandlers"></param>
         protected BehaviorBuilderImpl(
             TS state,
-            IReadOnlyDictionary<Type, Func<TE, ShardedEntity<TC, TE, TS>.Behavior, ShardedEntity<TC, TE, TS>.Behavior>> eventHandlers,
-            IReadOnlyDictionary<Type, Func<TC, ShardedEntity<TC, TE, TS>.ICommandContext<TC>, IPersist<TE>>> commandHandlers)
+            IReadOnlyDictionary<Type, Func<TE, ShardedEntity<TC, TE, TS>.Behavior, ShardedEntity<TC, TE, TS>.Behavior>>
+                eventHandlers,
+            IReadOnlyDictionary<Type, Func<TC, ShardedEntity<TC, TE, TS>.ICommandContext<TC>, IPersist<TE>>>
+                commandHandlers)
         {
             State = state;
             EventHandlers = ImmutableDictionary
@@ -61,14 +63,15 @@ namespace wyvern.api.@internal.behavior
         /// Map of command types to command handlers
         /// </summary>
         /// <value></value>
-        private ImmutableDictionary<Type, Func<TC, ShardedEntity<TC, TE, TS>.ICommandContext<TC>, IPersist<TE>>> CommandHandlers { get; }
+        private ImmutableDictionary<Type, Func<TC, ShardedEntity<TC, TE, TS>.ICommandContext<TC>, IPersist<TE>>>
+            CommandHandlers { get; }
 
         /// <summary>
         /// Map of event types to event handlers
         /// </summary>
         /// <value></value>
-        private ImmutableDictionary<Type, Func<TE, ShardedEntity<TC, TE, TS>.Behavior, ShardedEntity<TC, TE, TS>.Behavior>> EventHandlers
-        { get; }
+        private ImmutableDictionary<Type,
+            Func<TE, ShardedEntity<TC, TE, TS>.Behavior, ShardedEntity<TC, TE, TS>.Behavior>> EventHandlers { get; }
 
         /// <summary>
         /// Set the command handler for the given type
@@ -88,37 +91,12 @@ namespace wyvern.api.@internal.behavior
                     typeof(TC2),
                     (ctx, e) =>
                     {
-                        var d = func.Invoke((TC2)ctx, e);
+                        var d = func.Invoke((TC2) ctx, e);
                         return d;
                     }
                 )
             );
-
-        /// <summary>
-        /// Command handler for the _optional_ ability to ingest from a data source prior to
-        /// entity state initialization.  Helpful if leveraging an existing normalized data
-        /// source
-        /// </summary>
-        /// <typeparam name="TC2"></typeparam>
-        /// <typeparam name="TR2"></typeparam>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        public IBehaviorBuilder<TC, TE, TS> SetIngestionCommandHandler<TC2, TR2>(
-            Func<TC2, ShardedEntity<TC, TE, TS>.IIngestionCommandContext<TC>, IPersist<TE>> func)
-            where TC2 : IReplyType<TR2>, TC
-            where TR2 : class
-            => new BehaviorBuilder<TC, TE, TS>(
-                State,
-                EventHandlers,
-                CommandHandlers.Add(
-                    typeof(TC2),
-                    (ctx, e) =>
-                    {
-                        var d = func.Invoke((TC2)ctx, e as ShardedEntity<TC, TE, TS>.IIngestionCommandContext<TC>);
-                        return d;
-                    }
-                )
-            );
+        
 
         /// <summary>
         /// Set the event handler for the given type
@@ -135,7 +113,7 @@ namespace wyvern.api.@internal.behavior
                 State,
                 EventHandlers.Add(
                     typeof(TE2),
-                    (e, b) => b.WithState(func.Invoke((TE2)e))
+                    (e, b) => b.WithState(func.Invoke((TE2) e))
                 ),
                 CommandHandlers
             );
@@ -154,7 +132,7 @@ namespace wyvern.api.@internal.behavior
                 State,
                 EventHandlers.Add(
                     typeof(TE2),
-                    (e, b) => func.Invoke((TE2)e)
+                    (e, b) => func.Invoke((TE2) e)
                 ),
                 CommandHandlers
             );
@@ -178,7 +156,7 @@ namespace wyvern.api.@internal.behavior
                     typeof(TC2),
                     (ctx, e) =>
                     {
-                        func.Invoke((TC2)ctx, e);
+                        func.Invoke((TC2) ctx, e);
                         return e.Done();
                     }
                 )

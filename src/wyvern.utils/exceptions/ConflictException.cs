@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-namespace wyvern.api.exceptions
+namespace wyvern.utils.exceptions
 {
     /// <summary>
     /// Exception with 409 Conflict

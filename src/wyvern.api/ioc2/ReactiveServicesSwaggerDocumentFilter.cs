@@ -7,16 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Akka;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.Swagger;
-using wyvern.api.@internal.surfaces;
-using System.Text.RegularExpressions;
-using wyvern.api.abstractions;
 using System.Text;
+using System.Text.RegularExpressions;
+using Akka;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using wyvern.api.@internal.surfaces;
 
-namespace wyvern.api.ioc
+namespace wyvern.api.ioc2
 {
     /// <summary>
     /// Main component responsible for generating swagger documents from

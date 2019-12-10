@@ -5,7 +5,6 @@
 
 
 using System;
-using System.Collections.Generic;
 using Akka;
 using Akka.Actor;
 using Akka.Persistence.Query;
@@ -14,7 +13,7 @@ using Akka.Streams.Dsl;
 using Akka.Util;
 using wyvern.api.abstractions;
 using wyvern.entity.@event.aggregate;
-using wyvern.utils;
+using wyvern.utils.extensions;
 
 namespace wyvern.api.@internal.readside
 {

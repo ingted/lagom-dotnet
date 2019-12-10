@@ -6,7 +6,7 @@
 
 using System;
 
-namespace wyvern.api.exceptions
+namespace wyvern.utils.exceptions
 {
     /// <summary>
     /// Exception with HTTP status code

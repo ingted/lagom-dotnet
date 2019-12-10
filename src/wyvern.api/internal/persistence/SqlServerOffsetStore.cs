@@ -14,7 +14,7 @@ using Akka.Util;
 using Dapper;
 using wyvern.api.abstractions;
 
-namespace wyvern.api.@internal.surfaces
+namespace wyvern.api.@internal.persistence
 {
 
     internal class SqlServerOffsetStore : IOffsetStore

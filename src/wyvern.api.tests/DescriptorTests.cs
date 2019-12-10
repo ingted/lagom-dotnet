@@ -5,12 +5,11 @@
 
 
 using System;
-using wyvern.api;
 using wyvern.api.abstractions;
 using wyvern.api.@internal.surfaces;
 using Xunit;
 
-namespace wyvern.tests
+namespace wyvern.api.tests
 {
     public class DescriptorTests
     {

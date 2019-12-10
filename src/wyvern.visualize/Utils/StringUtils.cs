@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 
 namespace wyvern.visualize.Utils
 {

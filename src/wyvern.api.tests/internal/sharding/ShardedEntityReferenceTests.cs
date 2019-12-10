@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Akka.Actor;
 using wyvern.api.@internal.sharding;
 using Xunit;

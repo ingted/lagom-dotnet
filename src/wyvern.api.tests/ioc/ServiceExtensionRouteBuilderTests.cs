@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Xunit;
+using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace wyvern.api.tests.ioc

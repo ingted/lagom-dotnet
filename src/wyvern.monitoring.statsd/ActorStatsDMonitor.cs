@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using wyvern.monitoring.impl;
 using StatsdClient;
 

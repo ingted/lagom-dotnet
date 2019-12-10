@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using System.Reflection;
 
 namespace wyvern.visualize.Utils

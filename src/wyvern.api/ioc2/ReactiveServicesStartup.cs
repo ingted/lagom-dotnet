@@ -45,7 +45,8 @@ public class ReactiveServicesStartup
                 .AddRouting()
                 .AddSingleton<ConfigurationLoader>()
                 .AddSingleton<ActorSystemLifetime>()
-                .AddSingleton<ActorSystem>(x => {
+                .AddSingleton<ActorSystem>(x =>
+                {
                     var actorSystem = x.GetService<ActorSystemLifetime>().CreateActorSystem();
                     return actorSystem;
                 });
@@ -83,7 +84,7 @@ public class ReactiveServicesStartup
         app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
         app.UseWebSockets();
 
-         var router = new RouteBuilder(app);
+        var router = new RouteBuilder(app);
 
         // Register all calls for the services
         var entityTypes = ReactiveReflector.GetEntityTypes();

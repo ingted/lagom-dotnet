@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using wyvern.entity.@event.aggregate;
 
 namespace wyvern.api.@internal.readside

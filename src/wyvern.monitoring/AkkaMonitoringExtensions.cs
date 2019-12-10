@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Akka.Actor;
+using Akka.Actor;
 using wyvern.monitoring.impl;
 
 namespace wyvern.monitoring

@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using System.Collections.Immutable;
 using wyvern.api.abstractions;
 using wyvern.entity.@event;

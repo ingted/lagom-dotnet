@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using Akka.Configuration;
 using Xunit;
 using static Producer;

@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Akka.Actor;
+using Akka.Actor;
 using Akka.Util;
 using Microsoft.Extensions.DependencyInjection;
 

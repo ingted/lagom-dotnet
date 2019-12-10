@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 
 namespace wyvern.visualize.Utils

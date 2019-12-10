@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System.Linq;
+using System.Linq;
 using wyvern.monitoring.impl;
 using Akka.Util;
 
@@ -45,8 +45,8 @@ namespace wyvern.monitoring
         /// </summary>
         public void UpdateCounter(string metricName, int delta = 1, double sampleRate = 1.0)
         {
-            foreach(var client in _activeClients)
-                client.UpdateCounter(metricName,delta,sampleRate);
+            foreach (var client in _activeClients)
+                client.UpdateCounter(metricName, delta, sampleRate);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace wyvern.monitoring
         /// </summary>
         public void UpdateTimer(string metricName, long time, double sampleRate = 1.0)
         {
-            foreach(var client in _activeClients)
+            foreach (var client in _activeClients)
                 client.UpdateTiming(metricName, time, sampleRate);
         }
 
@@ -63,7 +63,7 @@ namespace wyvern.monitoring
         /// </summary>
         public void UpdateGauge(string metricName, int value, double sampleRate = 1.0)
         {
-            foreach(var client in _activeClients)
+            foreach (var client in _activeClients)
                 client.UpdateGauge(metricName, value, sampleRate);
         }
 

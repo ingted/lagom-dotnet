@@ -22,7 +22,7 @@ namespace wyvern.utils
         ILogger<DotNetCoreLogger> Logger { get; }
 
         public DotNetCoreLogger()
-        {   
+        {
             var fac = new LoggerFactory();
             Logger = fac.CreateLogger<DotNetCoreLogger>();
 

@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Akka.Util;
+using Akka.Util;
 using wyvern.visualize.Clients;
 
 namespace wyvern.visualize

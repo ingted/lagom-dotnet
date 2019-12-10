@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Akka.Actor;
+using Akka.Actor;
 using Akka.Event;
 using wyvern.monitoring.impl;
 using Akka.Util;

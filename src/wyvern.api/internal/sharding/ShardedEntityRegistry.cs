@@ -297,7 +297,8 @@ namespace wyvern.api.@internal.sharding
             ).Select(envelope => (EventStreamElement<TE>)envelope);
         }
 
-        public void Register<T>(Func<T> entityFactory = null) {
+        public void Register<T>(Func<T> entityFactory = null)
+        {
 
             var entity = typeof(T);
             var types = entity.BaseType.GenericTypeArguments;

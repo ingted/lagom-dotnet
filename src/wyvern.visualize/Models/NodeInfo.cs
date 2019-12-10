@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿namespace wyvern.visualize.Models
+namespace wyvern.visualize.Models
 {
     public class NodeInfo
     {

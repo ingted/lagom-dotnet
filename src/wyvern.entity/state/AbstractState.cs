@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿namespace wyvern.entity.state
+namespace wyvern.entity.state
 {
     /// <inheritdoc />
     /// <summary>

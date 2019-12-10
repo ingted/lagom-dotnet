@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System;
+using System;
 using Akka.Actor;
 
 namespace wyvern.visualize

@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 public class Program

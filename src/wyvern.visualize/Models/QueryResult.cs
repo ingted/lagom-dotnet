@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace wyvern.visualize.Models
 {

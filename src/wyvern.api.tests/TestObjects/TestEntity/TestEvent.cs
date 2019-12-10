@@ -40,8 +40,8 @@ namespace wyvern.api.tests
 
         public class InPrependMode : ChangedMode
         {
-            public InPrependMode(string entityId): base(TestEntity.Mode.PREPEND, entityId) { }
-            
+            public InPrependMode(string entityId) : base(TestEntity.Mode.PREPEND, entityId) { }
+
         }
 
         public class InAppendMode : ChangedMode
@@ -51,7 +51,7 @@ namespace wyvern.api.tests
 
         public abstract class Added : TestEvent
         {
-            private TestEntity.Mode Mode { get; } 
+            private TestEntity.Mode Mode { get; }
 
             public string EntityId { get; }
             public string Text { get; }
